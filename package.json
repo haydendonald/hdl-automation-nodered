@@ -8,10 +8,13 @@
     "url": "git@github.com:haydendonald/hdl-automation-nodered.git"
   },
   "license": "Apache-2.0",
-  "keywords": [
-  ],
+  "keywords": [],
   "node-red": {
     "nodes": {
+      "HDLNetwork": "./nodes/network.js",
+      "DeviceHandler": "./nodes/deviceHandler.js",
+      "Device": "./nodes/device.js",
+      "Bus": "./nodes/bus.js"
     }
   },
   "author": "Hayden Donald",

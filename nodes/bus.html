@@ -1,0 +1,51 @@
+
+<!-- Settings Panel -->
+<script type="text/x-red" data-template-name="hdlautomation-bus">
+    <div class="form-row">
+        <label for="node--input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node--input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-network"><i class="icon-bookmark"></i> Network</label>
+        <input type="text" id="node-input-network">
+    </div>
+</script>
+
+<!-- Register -->
+<script type="text/javascript">
+    RED.nodes.registerType('hdlautomation-bus', {
+        category: 'HDL',
+        color: '#25FFCA',
+        defaults: {
+            name: {value: ""},
+            network: {value: "", type: "hdlautomation-network"}
+        },
+        inputs: 1,
+        outputs: 1,
+        align: "right",
+        icon: "./logo.png",
+        paletteLabel: "Bus",
+        label: function() {
+            return this.name||"HDL Bus";
+        }
+    });
+</script>
+
+<!-- Information Panel -->
+<script type="text/x-red" data-help-name="hdlautomation-bus">
+    <h1>Provides direct connection to the HDL bus</h1>
+    </br>
+    </br>
+    <h3>The format is the same on the input and output in a msg.payload.x format</h3>
+    <ul>
+        <li><b>function</b> - The function<i>(String)</i></li>
+        <li><b>data</b> - Will be followed by the relevant information</i></li>
+        <li><b>raw</b></li>
+        <ul>
+            <li><b>opCode</b> - The operate code of the command <i>(hex)</i></li>
+            <li><b>targetSubnetID</b> - The targeted subnet ID <i>(hex)</i></li>
+            <li><b>targetDeviceID</b> - The targeted device ID <i>(hex)</i></li>
+            <li><b>contents</b> - The contents of the package <i>(Buffer of hex)</i></li>
+        </ul>
+    </ul>
+</script>

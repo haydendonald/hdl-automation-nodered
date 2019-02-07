@@ -1,0 +1,36 @@
+
+<!-- Settings Panel -->
+<script type="text/x-red" data-template-name="hdlautomation-device">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceHandler"><i class="icon-bookmark"></i> Device</label>
+        <input type="text" id="node-input-deviceHandler">
+    </div>
+</script>
+
+<!-- Register -->
+<script type="text/javascript">
+    RED.nodes.registerType('hdlautomation-device', {
+        category: 'HDL',
+        color: '#25A6FF',
+        defaults: {
+            name: {value: ""},
+            deviceHandler: {value: "", type: "hdlautomation-deviceHandler"}
+        },
+        inputs: 1,
+        outputs: 1,
+        align: "right",
+        icon: "./logo.png",
+        paletteLabel: "Device",
+        label: function() {
+            return this.name||"HDL Device";
+        }
+    });
+</script>
+
+<!-- Information Panel -->
+<script type="text/x-red" data-help-name="hdlautomation-device">
+</script>

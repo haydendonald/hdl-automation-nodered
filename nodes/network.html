@@ -1,0 +1,52 @@
+<script type="text/x-red" data-template-name="hdlautomation-network">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-ipAddress"><i class="icon-bookmark"></i> Remote IP Address</label>
+        <input type="text" id="node-config-input-ipAddress">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-localIpAddress"><i class="icon-bookmark"></i> Local IP Address</label>
+        <input type="text" id="node-config-input-localIpAddress">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-checkIP"><i class="icon-tag"></i> Check IP Address On Incoming:</label>
+        <select id="node-config-input-checkIP">
+            <option value=""></option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="icon-bookmark"></i> Port</label>
+        <input type="text" id="node-config-input-port">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-localSubnet"><i class="icon-bookmark"></i> Local Subnet</label>
+        <input type="text" id="node-config-input-localSubnet" value="99">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-localDeviceId"><i class="icon-bookmark"></i> Local ID</label>
+        <input type="text" id="node-config-input-localDeviceId" value="99">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('hdlautomation-network', {
+        category: 'config',
+        defaults: {
+            name: {value: ""},
+            ipAddress: {required: true},
+            localIpAddress: {required: true},
+            checkIP: {value:"yes", required:true},
+            port: {value: 6000, required: true, validate: RED.validators.number()},
+            localSubnet: {value: 99, required: true, validate: RED.validators.number()},
+            localDeviceId: {value: 99, required: true, validate: RED.validators.number()},
+        },
+        label: function() {
+            return (this.name || 'HDL Network' );
+        }
+    });
+</script>
