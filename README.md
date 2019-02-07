@@ -1,5 +1,5 @@
  # HDL Automation for Node Red
-Provides control and feedback of the HDL Automation bus.
+Provides control and feedback of the HDL Automation bus.  
 [HDL Automation](https://www.hdlautomation.com/)
 
 ## Currently in Development!
