@@ -1,0 +1,25 @@
+{
+  "name": "hdl-automation-nodered",
+  "version": "0.0.1",
+  "description": "Provides control and feedback of the HDL Automation bus for Node Red https://www.hdlautomation.com/",
+  "main": "",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:haydendonald/hdl-automation-nodered.git"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+  ],
+  "node-red": {
+    "nodes": {
+    }
+  },
+  "author": "Hayden Donald",
+  "bugs": {
+    "url": "https://github.com/haydendonald/hdl-automation-nodered/issues"
+  },
+  "homepage": "https://github.com/haydendonald/hdl-automation-nodered#readme",
+  "dependencies": {
+    "crc": "~3.4"
+  }
+}
