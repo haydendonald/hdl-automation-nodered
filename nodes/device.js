@@ -29,11 +29,11 @@ module.exports = function(RED)
 
         //When a request is received on the input
         this.on("input", function(msg) {
-            sendMessage(msg);
+            
         });
 
         //Add the node information to the msg object
-        function sendMessage(msg) {
+        node.sendMessage = function(msg) {
             msg.node = information;
             node.send(msg);
         }

@@ -27,16 +27,16 @@ module.exports = function(RED)
         //Debug startup
         if(debug) {
             console.log("-------------- Functions --------------");
-            for(var key in functions) {
-                console.log(functions[key].name + "[" + key + "]" + " - " + functions[key].description + " (" + functions[key].status + ")");
+            for(var key in functions.list) {
+                console.log(functions.list[key].name + "[" + key + "]" + " - " + functions.list[key].description + " (" + functions.list[key].status + ")");
              }
             console.log("");
             console.log("-------------- Devices --------------");
-             for(var key in devices) {
-                 console.log(devices[key].name + "[" + key + "]" + " - " + devices[key].description + " (" + devices[key].status + ")");
+             for(var key in devices.list) {
+                 console.log(devices.list[key].name + "[" + key + "]" + " - " + devices.list[key].description + " (" + devices.list[key].status + ")");
                  console.log("  Functions: ");
-                 for(var key2 in devices[key].functions) {
-                    console.log("   " + devices[key].functions[key2].name + "[" + key + "]" + " - " + devices[key].functions[key2].description + " (" + devices[key].functions[key2].status + ")");
+                 for(var key2 in devices.list[key].functions) {
+                    console.log("   " + devices.list[key].functions[key2].name + "[" + key + "]" + " - " + devices.list[key].functions[key2].description + " (" + devices.list[key].functions[key2].status + ")");
                  }
                  console.log("");
               }
@@ -68,7 +68,6 @@ module.exports = function(RED)
         var hdlMessageCallback = [];
         var msgFunctionCallbacks = [];
         var sendBuffer = [];
-        var recieveBuffer = [];
 
 		//When the flows are stopped
         this.on("close", function() {
@@ -131,7 +130,7 @@ module.exports = function(RED)
 
         //Send a message to the HDL bus
         //answerbackHandler = function(command, receivedSubnetID, receivedDeviceID, contents)
-        node.send = function(sender, command, targetSubnetID, targetDeviceID, contents, answerbackHandler) {
+        node.send = function(command, targetSubnetID, targetDeviceID, contents, answerbackHandler) {
             //Validate
             if(!/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(localIpAddress)){
                 node.error("Invalid Local IP Address: " + localIpAddress);
@@ -225,9 +224,11 @@ module.exports = function(RED)
 
             //Push to the send buffer to be processed
             sendBuffer.push({
-                "sender": sender,
+                "answerbackHandler": answerbackHandler,
                 "packet": finalPacket,
-                "answerbackOpCode": "0x02",
+                "targetedSubnetId": targetSubnetID,
+                "targetedDeviceId": targetDeviceID,
+                "answerbackOpCode": functions.findReplyCode(command),
                 "attempts": 0,
                 "timeout": 0
             });
@@ -238,9 +239,6 @@ module.exports = function(RED)
 
         //Process the incoming HDL message
         function processIncoming(message) {
-            //If false it's not a valid HDL packet so ignore it
-            if(message.length < 29 || message.length > 96){return;}
-
             //Check that the packet is correct
             if(checkIP) {
                 if(message[0] != ipAddress.split(".")[0]){ return; }
@@ -275,7 +273,6 @@ module.exports = function(RED)
             //CRC Code
             var crcValue = message.readUInt16BE(message.length -2);
             if(!crc(message.slice(16, -2))){ return false; }
-
             //Packet is valid parse the data
             var command = message.readUInt16BE(21);
             var deviceType = message.readUInt16BE(19);
@@ -286,15 +283,40 @@ module.exports = function(RED)
                 contents.writeUInt8(message[i + 25], i);
             }
 
+            var func = functions.findCommand(command);
             var packet = {
-                "command": command,
-                "deviceType": deviceType,
+                "raw": {
+                    "command": command,
+                    "deviceType": deviceType,
+                    "contents": contents
+                },
+                "func": func,
                 "subnetId": subnetId,
                 "deviceId": deviceId,
-                "contents": contents
+                "data": func.actions[func.mode].processData(contents)
             }
 
-            console.log(packet);
+            //Check if the command exists in the sent items
+            var wasResponse = false;
+            for(var i = 0; i < sendBuffer.length; i++) {;
+                console.log(sendBuffer[i].targetedSubnetId);
+                console.log(deviceId);
+                if(sendBuffer[i].targetedSubnetId == subnetId) {
+                    if(sendBuffer[i].targetedDeviceId == deviceId) {
+                        if(sendBuffer[i].answerbackOpCode == command || sendBuffer[i].answerbackOpCode == 0x00) {
+                            //Success!
+                            sendBuffer[i].answerbackHandler(true, packet);
+                            sendBuffer.pop(sendBuffer[i]);
+                            wasResponse = true;
+                        }
+                    }
+                }
+            }
+
+            //Pass to to all nodes that are expecting to send out all data
+            for(var i = 0; i < hdlMessageCallback.length; i++) {
+                hdlMessageCallback[i](packet);
+            }
         }
 
 

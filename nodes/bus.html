@@ -6,6 +6,14 @@
         <input type="text" id="node--input-name" placeholder="Name">
     </div>
     <div class="form-row">
+        <label for="node-input-alwaysOutput"><i class="icon-tag"></i> Always Output:</label>
+        <select id="node-input-alwaysOutput">
+            <option value=""></option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-network"><i class="icon-bookmark"></i> Network</label>
         <input type="text" id="node-input-network">
     </div>
@@ -18,6 +26,7 @@
         color: '#25FFCA',
         defaults: {
             name: {value: ""},
+            alwaysOutput: {value: "no", required: true},
             network: {value: "", type: "hdlautomation-network"}
         },
         inputs: 1,
@@ -43,8 +52,8 @@
         <li><b>raw</b></li>
         <ul>
             <li><b>opCode</b> - The operate code of the command <i>(hex)</i></li>
-            <li><b>targetSubnetID</b> - The targeted subnet ID <i>(hex)</i></li>
-            <li><b>targetDeviceID</b> - The targeted device ID <i>(hex)</i></li>
+            <li><b>subnetId</b> - The targeted subnet ID <i>(hex)</i></li>
+            <li><b>deviceId</b> - The targeted device ID <i>(hex)</i></li>
             <li><b>contents</b> - The contents of the package <i>(Buffer of hex)</i></li>
         </ul>
     </ul>
