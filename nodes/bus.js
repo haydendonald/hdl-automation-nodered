@@ -43,6 +43,7 @@ module.exports = function(RED)
                         "contents": packet.raw.contents
                     },
                 }
+
                 node.sendMessage(msg);
             });
         }

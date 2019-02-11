@@ -1,11 +1,11 @@
 module.exports = {
     list: {
-        sceneControl: require("./sceneControl.js")
+        sceneControl: require("./sceneControl.js"),
+        UVSwitch: require("./UVSwitch.js")
     },
 
     //Find a function based on its command
     findCommand: function(command) {
-        var func = null;
         var name = "unknown";
         var description = "unknown";
         var status = "unknown";
@@ -42,6 +42,13 @@ module.exports = {
                 }
             }
          }
+
+         if(name == "unknown"){return null;}
+         if(actions == null){return null;}
+         if(operate == "unknown"){return null;}
+         if(mode == "unknown"){return null;}
+         if(direction == "unknown"){return null;}
+         if(replyCode == "unknown"){return null;}
 
          return {
              "operate": operate,

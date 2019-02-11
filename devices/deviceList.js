@@ -9,7 +9,8 @@ module.exports = {
             "name": "PC",
             "description": "PC",
             "functions": {
-                sceneControl: require("./functions/sceneControl.js")
+                sceneControl: require("./functions/sceneControl.js"),
+                UVSwitch: require("./functions/UVSwitch.js")
             }
         }
     }

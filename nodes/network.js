@@ -283,17 +283,31 @@ module.exports = function(RED)
                 contents.writeUInt8(message[i + 25], i);
             }
 
-            var func = functions.findCommand(command);
             var packet = {
                 "raw": {
                     "command": command,
                     "deviceType": deviceType,
                     "contents": contents
-                },
-                "func": func,
-                "subnetId": subnetId,
-                "deviceId": deviceId,
-                "data": func.actions[func.mode].processData(contents)
+                }
+            }
+
+            var func = functions.findCommand(command);
+
+            if(func !== null) {
+                packet = {
+                    "raw": packet.raw,
+                    "func": func,
+                    "subnetId": subnetId,
+                    "deviceId": deviceId,
+                    "data": func.actions[func.mode].processData(contents)
+                }
+            }
+            else {
+                packet = {
+                    "raw": packet.raw,
+                    "subnetId": subnetId,
+                    "deviceId": deviceId
+                }
             }
 
             //Check if the command exists in the sent items
@@ -312,6 +326,8 @@ module.exports = function(RED)
                     }
                 }
             }
+
+            console.log(packet);
 
             //Pass to to all nodes that are expecting to send out all data
             for(var i = 0; i < hdlMessageCallback.length; i++) {

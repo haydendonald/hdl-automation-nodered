@@ -1,16 +1,16 @@
 module.exports = {
-    status: "To be tested",
-    name: "Scene Control",
-    description: "Scene control selects a scene within a area",
+    status: "Not Supported",
+    name: "UV Switch",
+    description: "Controls the status of the universal switches",
 
     actions: {
         set: {
-            request: 0x0002,
-            answerBack: 0x0003,
+            request: 0xE01C,
+            answerBack: 0xE01D,
             processData: function(data) {
                 return {
-                    "areaNumber": data[0],
-                    "sceneNumber": data[1]
+                    "switchNumber": data[0],
+                    "state": data[1]
                 }
             },
             generateData: function(data) {
@@ -21,12 +21,12 @@ module.exports = {
         },
     
         read: {
-            request: 0x000C,
-            answerBack: 0x000D,
+            request: 0xE018,
+            answerBack: 0xE019,
             processData: function(data) {
                 return {
-                    "areaNumber": data[0],
-                    "sceneNumber": data[1]
+                    "switchNumber": data[0],
+                    "state": data[1]
                 }
             },
             generateData: function(data) {
@@ -37,7 +37,7 @@ module.exports = {
         },
     
         broadcast: {
-            request: 0xEFFFF,
+            request: 0xE017,
             answerBack: 0xFFFF,
             processData: function(data) {
                 return {
