@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/haydendonald/hdl-automation-nodered#readme",
   "dependencies": {
-    "crc": "~3.4"
+    "crc": "~3.4",
+    "ping": "~0.2.2"
   }
 }
