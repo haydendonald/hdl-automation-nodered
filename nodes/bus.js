@@ -23,14 +23,22 @@ module.exports = function(RED)
         node.status({fill:"red",shape:"dot",text:"Not Connected"});
 
         //Display the statuses of the device
-        network.addStatusCallback(function(colour, message) {
+        network.addStatusCallback(function(colour, message, extraInformation) {
+           node.sendStatus(colour, message, extraInformation);
+        });
+        network.addHDLMessageCallback(function(packet) {
+            sendMessage(packet);
+        });
+
+        node.sendStatus = function(colour, message, extraInformation) {
             //Handle incoming messages
             switch(message) {
                 case "Connected!": {
                     var msg = {
                         "payload": {
                             "connected": true,
-                            "status": "connected"
+                            "status": "connected",
+                            "extraInformation": extraInformation
                         }
                     }
                     sendMessage(msg);
@@ -41,7 +49,8 @@ module.exports = function(RED)
                     var msg = {
                         "payload": {
                             "connected": false,
-                            "status": "connection-failed"
+                            "status": "connection-failed",
+                            "extraInformation": extraInformation
                         }
                     }
                     sendMessage(msg);
@@ -52,21 +61,58 @@ module.exports = function(RED)
                     var msg = {
                         "payload": {
                             "connected": false,
-                            "status": "lost-connection"
+                            "status": "lost-connection",
+                            "extraInformation": extraInformation
                         }
                     }
                     sendMessage(msg);
                     break;
                 }
+
+                case "Internal Error": {
+                    var msg = {
+                        "payload": {
+                            "connected": false,
+                            "status": "internal-error",
+                            "extraInformation": extraInformation
+                        }
+                    }
+                    sendMessage(msg);
+                    break;
+                };
+
+                case "Failed": {
+                    var msg = {
+                        "payload": {
+                            "connected": true,
+                            "status": "message-failed-to-send",
+                            "extraInformation": extraInformation
+                        }
+                    }
+                    sendMessage(msg);
+                    break;
+                }
+
+                default: {
+                    var msg = {
+                        "payload": {
+                            "connected": true,
+                            "status": message,
+                            "extraInformation": extraInformation
+                        }
+                    }
+                    sendMessage(msg);
+                    break;   
+                }
             }
 
             node.status({fill:colour,shape:"dot",text:message});
-        });
+        }
 
         //When a request is received on the input
         this.on("input", function(msg) {
-            node.error("Not Implemented!");
-        });
+            network.send(node, 0xFFFF, 0x01, 0x02, Buffer.from([0x01, 0x01]), function(poo){});
+    });
 
         //Add the node information to the msg object
         function sendMessage(msg) {

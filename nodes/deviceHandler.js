@@ -27,17 +27,17 @@ module.exports = function(RED)
         if(deviceId == null) {node.error("[Critical] - Device ID is not set");}
 
         //Pass all network statuses to the subscribed nodes
-        network.addStatusCallback(function(colour, message) {
-            sendStatus(colour, message);
+        network.addStatusCallback(function(colour, message, extraInformation) {
+            node.sendStatus(colour, message, extraInformation);
         });
 
         node.on("close", function() {
         });
 
         //Send a status to all other nodes that are subscribed to the status updates
-        function sendStatus(colour, message) {
+        node.sendStatus = function(colour, message, extraInformation = "none") {
             for(var i = 0; i < msgFunctionCallbacks.length; i++) {
-                msgFunctionCallbacks[i](colour, message);
+                msgFunctionCallbacks[i](colour, message, extraInformation);
             }
         }
 

@@ -4,7 +4,6 @@ module.exports = function(RED)
     function HDLDevice(config)
     {
         RED.nodes.createNode(this, config);
-        console.log(RED.nodes.getNode(config.deviceHandler));
         var deviceHandler = RED.nodes.getNode(config.deviceHandler);
         var name = config.name;
         var node = this;
@@ -17,12 +16,16 @@ module.exports = function(RED)
         //Check all relevent variables are present
         if(deviceHandler == null) {node.error("[Critical] - Device handler is not set");}
 
-        node.status({fill:"gray",shape:"dot",text:"Waiting"});
+        node.status({fill:"red",shape:"dot",text:"Not Connected"});
 
         //Display the statuses of the device
         deviceHandler.addStatusCallback(function(colour, message) {
-            node.status({fill:colour,shape:"dot",text:message});
+            node.sendStatus(colour, message);
         });
+
+        node.sendStatus = function(colour, message) {
+            node.status({fill:colour,shape:"dot",text:message});
+        }
 
         //When a request is received on the input
         this.on("input", function(msg) {

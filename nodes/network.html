@@ -38,8 +38,8 @@
         category: 'config',
         defaults: {
             name: {value: ""},
-            ipAddress: {required: true},
-            localIpAddress: {required: true},
+            ipAddress: {required: true, validate: RED.validators.regex(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/)},
+            localIpAddress: {required: true,  validate: RED.validators.regex(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/)},
             checkIP: {value:"yes", required:true},
             port: {value: 6000, required: true, validate: RED.validators.number()},
             localSubnet: {value: 99, required: true, validate: RED.validators.number()},
