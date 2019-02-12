@@ -10,7 +10,8 @@ module.exports = {
             "description": "PC",
             "functions": {
                 sceneControl: require("./functions/sceneControl.js"),
-                UVSwitch: require("./functions/UVSwitch.js")
+                UVSwitch: require("./functions/UVSwitch.js"),
+                dateTime: require("./functions/dateTime.js")
             }
         }
     }

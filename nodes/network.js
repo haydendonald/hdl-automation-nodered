@@ -109,7 +109,7 @@ module.exports = function(RED)
                     connected = true;
                 }
                 else {
-                    sendStatus("red", "Lost Connection");
+                    node.sendStatus("red", "Lost Connection");
                     node.error("Lost connection to HDL network @ " + ipAddress);
                     connected = false;
                 }
@@ -130,7 +130,7 @@ module.exports = function(RED)
 
         //Send a message to the HDL bus
         //answerbackHandler = function(command, receivedSubnetID, receivedDeviceID, contents)
-        node.send = function(command, targetSubnetID, targetDeviceID, contents, answerbackHandler) {
+        node.send = function(sender, command, targetSubnetID, targetDeviceID, contents, answerbackHandler) {
             //Validate
             if(!/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(localIpAddress)){
                 node.error("Invalid Local IP Address: " + localIpAddress);
@@ -193,7 +193,7 @@ module.exports = function(RED)
             //Constant buffer
             var constBuffer = new Buffer.from("HDLMIRACLE");
             var leadBuffer = new Buffer.alloc(2);
-            leadBuffer.writeUInt16BE(0xAAAA);
+            leadBuffer.writeUInt16BE(0xAAAA, 0);
 
             //Data buffer
             //Calculate the length of the packet
@@ -202,18 +202,18 @@ module.exports = function(RED)
             if(contents){length += contents.length;}
             if(length < 0 || length > 78) {
                 node.error("Data package size incorrect: " + length);
-                sendStatus("red", "Internal Error", "Data package size incorrect");
+                node.sendStatus("red", "Internal Error", "Data package size incorrect");
                 return false;
-            }      
-            
-            var dataBuffer = new Buffer.alloc(11);
-            dataBuffer.writeUInt8(length, 2);
-            dataBuffer.writeUInt8(localSubnet, 3);
-            dataBuffer.writeUInt8(localDeviceId, 4);
-            dataBuffer.writeUInt16BE(localDeviceType, 5);
-            dataBuffer.writeUInt16BE(command, 7);
-            dataBuffer.writeUInt8(targetSubnetID, 9);
-            dataBuffer.writeUInt8(targetDeviceID, 10);
+            }   
+ 
+            var dataBuffer = new Buffer.alloc(9);
+            dataBuffer.writeUInt8(length, 0);
+            dataBuffer.writeUInt8(localSubnet, 1);
+            dataBuffer.writeUInt8(localDeviceId, 2);
+            dataBuffer.writeUInt16BE(localDeviceType, 3);
+            dataBuffer.writeUInt16BE(command, 5);
+            dataBuffer.writeUInt8(targetSubnetID, 7);
+            dataBuffer.writeUInt8(targetDeviceID, 8);
 
             //CRC buffer
             var CRCBuffer = new Buffer.alloc(2);
@@ -224,6 +224,7 @@ module.exports = function(RED)
 
             //Push to the send buffer to be processed
             sendBuffer.push({
+                "sender": sender,
                 "answerbackHandler": answerbackHandler,
                 "packet": finalPacket,
                 "targetedSubnetId": targetSubnetID,
@@ -236,17 +237,100 @@ module.exports = function(RED)
             processSendBuffer();
         }
 
+        //Generate a message to the hdl bus that is formatted as a msg object
+        //Returns a json with the values to be sent over the bus
+        node.sendMsg = function(sender, msg) {
+            var opCode = msg.payload.opCode;
+            var subnetId = msg.payload.subnetId;
+            var deviceId = msg.payload.deviceId;
+            var operate = msg.payload.operate;
+            var mode = msg.payload.mode;
+            var direction = msg.payload.direction;
+            var data = msg.payload.data;
+            var contents = msg.payload.contents;
+
+            //Validate and find raw values
+
+            //Subnet ID and Device ID
+            if(typeof subnetId != 'number'){
+                node.error("Error: invalid subnetId. An subnetId is expected to be a number between 0 and 254");
+                node.sendStatus("yellow", "Invalid Input", "Invalid subnetId");
+                return false;
+            }
+            if(typeof deviceId != 'number'){
+                node.error("Error: invalid deviceId. An deviceId is expected to be a number between 0 and 254");
+                node.sendStatus("yellow", "Invalid Input", "Invalid deviceId");
+                return false;
+            }
+
+            //Operate
+            if(operate === null || operate === undefined) {
+                if(opCode === null || opCode === undefined) {
+                    node.error("Error: No operate or opCode parameter was found.");
+                    node.sendStatus("yellow", "Invalid Input", "No operate or opCode");
+                    return false;
+                }
+                else {
+                    //opCode
+                    if(typeof opCode == "number") {
+                        if(opCode >= 0 && opCode <= 65535) {
+                            //We are in opCode mode so now we'll check that all parameters are found
+                            if(!Buffer.isBuffer(contents)){
+                                node.error("Error: Invalid contents this should be a buffer of hex");
+                                node.sendStatus("yellow", "Internal Error", "Invalid Contents");
+                                return false;
+                            }
+                        }
+                        else {
+                            node.error("Error: Invalid opCode: " + operate + ". The command is out of range, it should be between 0 and 65535");
+                            node.sendStatus("yellow", "Invalid Input", "Invalid opCode");
+                            return false;
+                        }
+                    }
+                    else {
+                        node.error("Error: Invalid opCode: " + operate + ". This should be a String");
+                        node.sendStatus("yellow", "Invalid Input", "Invalid opCode");
+                        return false;
+                    }
+                }
+            }
+            else if(typeof operate == "string"){
+                //We are in operate mode so now we'll need to search and find all required parameters for the operate command
+                if(typeof mode != "string"){
+                    node.error("Error: invalid mode. The mode should be a String");
+                    node.sendStatus("yellow", "Invalid Input", "Invalid mode");
+                    return false;
+                }
+                if(typeof direction != "string"){
+                    node.error("Error: invalid direction. The direction should be a String");
+                    node.sendStatus("yellow", "Invalid Input", "Invalid direction");
+                    return false;
+                }
+
+                opCode = functions.findOpCode(operate, mode, direction);
+
+                //If the contents buffer is not defined generate it otherwise we'll just send that
+                if(!Buffer.isBuffer(contents)){
+                    contents = functions.generateContentsFromData(opCode, data);
+                }
+            }
+            else {
+                node.error("Error: Invalid operate: " + operate + ". This should be a String");
+                node.sendStatus("yellow", "Invalid Input", "Invalid operate");
+            }
+
+            var ret = {
+                "command": opCode,
+                "targetSubnetID": subnetId,
+                "targetDeviceID": deviceId,
+                "contents": contents,
+            }
+
+            return ret;
+        }
 
         //Process the incoming HDL message
         function processIncoming(message) {
-            //Check that the packet is correct
-            if(checkIP) {
-                if(message[0] != ipAddress.split(".")[0]){ return; }
-                if(message[1] != ipAddress.split(".")[1]){ return; }
-                if(message[2] != ipAddress.split(".")[2]){ return; }
-                if(message[3] != ipAddress.split(".")[3]){ return; }
-            }
-
             //HDLMIRACLE (In dec)
             if(message[4] != 72){ return false; }
             if(message[5] != 68){ return false; }
@@ -283,58 +367,51 @@ module.exports = function(RED)
                 contents.writeUInt8(message[i + 25], i);
             }
 
-            var packet = {
-                "raw": {
-                    "command": command,
-                    "deviceType": deviceType,
-                    "contents": contents
-                }
-            }
-
             var func = functions.findCommand(command);
-
-            if(func !== null) {
-                packet = {
-                    "raw": packet.raw,
-                    "func": func,
-                    "subnetId": subnetId,
-                    "deviceId": deviceId,
-                    "data": func.actions[func.mode].processData(contents)
+            var packet = {
+                "payload": {
+                    "opCode": command,
+                    "sender": {
+                        "deviceType": "unknown",
+                        "subnetId": subnetId,
+                        "deviceId": deviceId
+                    },
+                    "operate": null,
+                    "mode": null,
+                    "direction": null,
+                    "data": null,
+                    "contents": contents         
                 }
             }
-            else {
-                packet = {
-                    "raw": packet.raw,
-                    "subnetId": subnetId,
-                    "deviceId": deviceId
-                }
+
+            //If we have found a function for the opCode
+            if(func !== null) {
+                packet.payload.operate = func.operate;
+                packet.payload.mode = func.mode;
+                packet.payload.direction = func.direction;
+                packet.payload.data = func.actions[func.mode].processData(contents)
             }
 
             //Check if the command exists in the sent items
-            var wasResponse = false;
+            var sentTo = null;
             for(var i = 0; i < sendBuffer.length; i++) {;
-                console.log(sendBuffer[i].targetedSubnetId);
-                console.log(deviceId);
                 if(sendBuffer[i].targetedSubnetId == subnetId) {
                     if(sendBuffer[i].targetedDeviceId == deviceId) {
                         if(sendBuffer[i].answerbackOpCode == command || sendBuffer[i].answerbackOpCode == 0x00) {
                             //Success!
+                            sentTo = sendBuffer[i].sender;
                             sendBuffer[i].answerbackHandler(true, packet);
                             sendBuffer.pop(sendBuffer[i]);
-                            wasResponse = true;
                         }
                     }
                 }
             }
 
-            console.log(packet);
-
             //Pass to to all nodes that are expecting to send out all data
             for(var i = 0; i < hdlMessageCallback.length; i++) {
-                hdlMessageCallback[i](packet);
+                hdlMessageCallback[i](packet, sentTo);
             }
         }
-
 
         //Send out all commands in the send buffer
         function processSendBuffer() {
@@ -375,7 +452,7 @@ module.exports = function(RED)
                 node.sendStatus("red", "Internal Error", err);
             });
 
-            server.on('message', function(message) {console.log(message);processIncoming(message);});
+            server.on('message', function(message) {processIncoming(message);});
 
             server.bind(port);
             return server;

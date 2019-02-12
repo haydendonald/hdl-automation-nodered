@@ -14,9 +14,9 @@ module.exports = {
                 }
             },
             generateData: function(data) {
-                return {
-                    "error": "Not Supported"
-                }
+                if (typeof data.areaNumber != 'number'){ return "Invalid area number: " + data.areaNumber; }
+                if (typeof data.sceneNumber != 'number'){ return "Invalid scene number: " + data.sceneNumber; }
+                return Buffer.from([data.areaNumber, data.sceneNumber]);
             }
         },
     
@@ -30,9 +30,9 @@ module.exports = {
                 }
             },
             generateData: function(data) {
-                return {
-                    "error": "Not Supported"
-                }
+                if (typeof data.areaNumber != 'number'){ return "Invalid area number: " + data.areaNumber; }
+                if (typeof data.sceneNumber != 'number'){ return "Invalid scene number: " + data.sceneNumber; }
+                return Buffer.from([data.areaNumber, data.sceneNumber]);
             }
         },
     
@@ -45,9 +45,7 @@ module.exports = {
                 }
             },
             generateData: function(data) {
-                return {
-                    "error": "Not Supported"
-                }
+                return "Not Supported"
             }
         }
     }
