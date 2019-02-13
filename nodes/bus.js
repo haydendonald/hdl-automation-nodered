@@ -11,12 +11,11 @@ module.exports = function(RED)
         var node = this;
         var name = config.name;
         var network = RED.nodes.getNode(config.network);
-        var alwaysOutput = config.alwaysOutput == "yes";
+        var outputMode = config.outputMode;
         var information = {
             "name": name,
             "type": node.type,
-            "network": network.information,
-            "alwaysOutput": alwaysOutput
+            "outputMode": outputMode
         }
 
         //Check all relevent variables are present
@@ -29,14 +28,31 @@ module.exports = function(RED)
            node.sendStatus(colour, message, extraInformation);
         });
 
-        //If this node is set to receive all data add it to the list
-        if(alwaysOutput) {
-            network.addHDLMessageCallback(function(packet, sentTo) {
-                if(sentTo != node) {
-                    node.status({fill:"green",shape:"dot",text:"Got Data!"});
-                    node.sendMessage(packet);
-                }
-            });
+        //Switch the output mode
+        switch(outputMode) {
+            case "answerBack": {
+                //This will be handled below
+                break;
+            }
+            case "local": {
+                network.addHDLMessageCallback(function(packet, sentTo) {
+                    console.log(packet.payload.senderwasSentToThisDevice);
+                    if(sentTo != node && packet.payload.sender.wasSentToThisDevice) {
+                        node.status({fill:"green",shape:"dot",text:"Got Data!"});
+                        node.sendMessage(packet);
+                    }
+                });
+                break;
+            }
+            case "all": {
+                network.addHDLMessageCallback(function(packet, sentTo) {
+                    if(sentTo != node) {
+                        node.status({fill:"green",shape:"dot",text:"Got Data!"});
+                        node.sendMessage(packet);
+                    }
+                });
+                break;
+            }
         }
 
         node.sendStatus = function(colour, message, extraInformation) {

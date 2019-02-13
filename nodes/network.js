@@ -349,10 +349,12 @@ module.exports = function(RED)
 
             //Size of packet
             if(message[16] < 11 || message[16] > 78){ return; }
+
+            var wasSentToThisDevice = true;
             //Target Subnet ID (Equal to local, or global 255 value)
-            if(!(message[23] == localSubnet || message[23] == 255)){return false;}
+            if(!(message[23] == localSubnet || message[23] == 255)){wasSentToThisDevice = false;}
             //Target Device ID (Equal to local, or global 255 value)
-            if(!(message[24] == localDeviceId || message[24] == 255)){return false;}  
+            if(!(message[24] == localDeviceId || message[24] == 255)){wasSentToThisDevice = false;}  
 
             //CRC Code
             var crcValue = message.readUInt16BE(message.length -2);
@@ -374,7 +376,8 @@ module.exports = function(RED)
                     "sender": {
                         "deviceType": "unknown",
                         "subnetId": subnetId,
-                        "deviceId": deviceId
+                        "deviceId": deviceId,
+                        "wasSentToThisDevice": wasSentToThisDevice
                     },
                     "operate": null,
                     "mode": null,

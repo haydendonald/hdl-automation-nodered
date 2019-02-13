@@ -6,11 +6,12 @@
         <input type="text" id="node--input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-alwaysOutput"><i class="icon-tag"></i> Always Output:</label>
-        <select id="node-input-alwaysOutput">
+        <label for="node-input-outputMode"><i class="icon-tag"></i> Output Mode:</label>
+        <select id="node-input-outputMode">
             <option value=""></option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
+            <option value="answerback">Only output answer back</option>
+            <option value="local">Output all messages sent to this device</option>
+            <option value="all">Output all messages</option>
         </select>
     </div>
     <div class="form-row">
@@ -26,7 +27,7 @@
         color: '#25FFCA',
         defaults: {
             name: {value: ""},
-            alwaysOutput: {value: "no", required: true},
+            outputMode: {value: "answerBack", required: true},
             network: {value: "", type: "hdl-network"}
         },
         inputs: 1,
