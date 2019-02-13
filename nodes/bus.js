@@ -142,5 +142,5 @@ module.exports = function(RED)
         }
     }
 
-    RED.nodes.registerType("hdlautomation-bus", HDLBus);
+    RED.nodes.registerType("hdl-bus", HDLBus);
 }

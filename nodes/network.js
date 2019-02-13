@@ -475,5 +475,5 @@ module.exports = function(RED)
     }
 
     //Add the node
-    RED.nodes.registerType("hdlautomation-network", HDLNetwork);
+    RED.nodes.registerType("hdl-network", HDLNetwork);
 }

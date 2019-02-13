@@ -1,6 +1,6 @@
 
 <!-- Settings Panel -->
-<script type="text/x-red" data-template-name="hdlautomation-bus">
+<script type="text/x-red" data-template-name="hdl-bus">
     <div class="form-row">
         <label for="node--input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node--input-name" placeholder="Name">
@@ -21,13 +21,13 @@
 
 <!-- Register -->
 <script type="text/javascript">
-    RED.nodes.registerType('hdlautomation-bus', {
+    RED.nodes.registerType('hdl-bus', {
         category: 'HDL',
         color: '#25FFCA',
         defaults: {
             name: {value: ""},
             alwaysOutput: {value: "no", required: true},
-            network: {value: "", type: "hdlautomation-network"}
+            network: {value: "", type: "hdl-network"}
         },
         inputs: 1,
         outputs: 1,
@@ -41,7 +41,7 @@
 </script>
 
 <!-- Information Panel -->
-<script type="text/x-red" data-help-name="hdlautomation-bus">
+<script type="text/x-red" data-help-name="hdl-bus">
     <h1>Provides direct connection to the HDL bus</h1>
     </br>
     </br>

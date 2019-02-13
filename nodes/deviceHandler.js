@@ -47,5 +47,5 @@ module.exports = function(RED)
         }
     }
 
-    RED.nodes.registerType("hdlautomation-deviceHandler", DeviceHandler);
+    RED.nodes.registerType("hdl-deviceHandler", DeviceHandler);
 }

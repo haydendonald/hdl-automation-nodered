@@ -39,5 +39,5 @@ module.exports = function(RED)
         }
     }
 
-    RED.nodes.registerType("hdlautomation-device", HDLDevice);
+    RED.nodes.registerType("hdl-device", HDLDevice);
 }

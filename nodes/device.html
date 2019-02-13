@@ -1,6 +1,6 @@
 
 <!-- Settings Panel -->
-<script type="text/x-red" data-template-name="hdlautomation-device">
+<script type="text/x-red" data-template-name="hdl-device">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -13,12 +13,12 @@
 
 <!-- Register -->
 <script type="text/javascript">
-    RED.nodes.registerType('hdlautomation-device', {
+    RED.nodes.registerType('hdl-device', {
         category: 'HDL',
         color: '#25A6FF',
         defaults: {
             name: {value: ""},
-            deviceHandler: {value: "", type: "hdlautomation-deviceHandler"}
+            deviceHandler: {value: "", type: "hdl-deviceHandler"}
         },
         inputs: 1,
         outputs: 1,
@@ -32,5 +32,5 @@
 </script>
 
 <!-- Information Panel -->
-<script type="text/x-red" data-help-name="hdlautomation-device">
+<script type="text/x-red" data-help-name="hdl-device">
 </script>
