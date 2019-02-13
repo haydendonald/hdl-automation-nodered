@@ -43,19 +43,13 @@
 
 <!-- Information Panel -->
 <script type="text/x-red" data-help-name="hdl-bus">
-    <h1>Provides direct connection to the HDL bus</h1>
-    </br>
-    </br>
-    <h3>The format is the same on the input and output in a msg.payload.x format</h3>
-    <ul>
-        <li><b>function</b> - The function<i>(String)</i></li>
-        <li><b>data</b> - Will be followed by the relevant information</i></li>
-        <li><b>raw</b></li>
-        <ul>
-            <li><b>opCode</b> - The operate code of the command <i>(hex)</i></li>
-            <li><b>subnetId</b> - The targeted subnet ID <i>(hex)</i></li>
-            <li><b>deviceId</b> - The targeted device ID <i>(hex)</i></li>
-            <li><b>contents</b> - The contents of the package <i>(Buffer of hex)</i></li>
-        </ul>
-    </ul>
+    <h1>HDL Bus</h1>
+    <h2>The HDL bus node provides direct connection to the HDL bus.</h2>
+    <h2>Settings</h2>
+    <p><strong>Name</strong>: The name of the node that will appear in the flow.</p>
+    <p><strong>Output Mode</strong>: The amount of information that will be outputted. </p>
+    <p><strong>Network</strong>: The HDL network device that is providing connection to the bus via a network connection.</p>
+    <h2>Sending a message to the bus</h2>
+    <p>When sending there are two ways to send the information, first send it using the supported commands, or send a raw packet.<p>
+    <img src="">
 </script>

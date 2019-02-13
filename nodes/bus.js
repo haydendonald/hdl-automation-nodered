@@ -36,7 +36,6 @@ module.exports = function(RED)
             }
             case "local": {
                 network.addHDLMessageCallback(function(packet, sentTo) {
-                    console.log(packet.payload.senderwasSentToThisDevice);
                     if(sentTo != node && packet.payload.sender.wasSentToThisDevice) {
                         node.status({fill:"green",shape:"dot",text:"Got Data!"});
                         node.sendMessage(packet);
