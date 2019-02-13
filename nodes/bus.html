@@ -51,5 +51,67 @@
     <p><strong>Network</strong>: The HDL network device that is providing connection to the bus via a network connection.</p>
     <h2>Sending a message to the bus</h2>
     <p>When sending there are two ways to send the information, first send it using the supported commands, or send a raw packet.<p>
-    <img src="">
+    <xmp>
+        1.	Supported method (Scene control as an example)
+        var msg = {
+            “payload”: {
+                “operate”: “sceneControl”,
+                “mode”: “set”,
+                “direction”: “request”,
+                "subnetId": 1,
+                "deviceId": 1,
+                “data”: {
+                    “areaNumber”: 1,
+                    “sceneNumber”: 1
+                }
+            }
+        }
+        return msg;
+
+        The above message will set the scene of the device is was sent to scene 1 in area 1.
+
+        2.	Sending a raw packet (Advanced)
+        var msg = {
+            “payload”: {
+                “opCode”: 0x0002,
+                “contents”: Buffer.from([1, 1])
+            }
+        }
+        return msg;
+        The above message will do the same, set the scene of the device is was sent to scene 1 in area 1.
+    </xmp>
+    <h2>Receiving a message from the bus</h2>
+    <p>When receiving a message from the bus it will be outputted in the following format<p>
+    <xmp>
+        msg: {
+            payload: {
+                opCode: 0x002,
+                sender: {
+                    deviceType: "HDL-MR1220" OR "0x000B",
+                    subnetId: 1,
+                    deviceId: 1,
+                    wasSentToThisDevice: true
+                }
+                operate: “sceneControl”,
+                mode: “set”,
+                direction: “request”,
+                data: {
+                    areaNumber: 1,
+                    sceneNumber: 1
+                },
+                contents: [0x01, 0x01]
+            }
+        }
+    </xmp>
+    <p>However if the command is not supported the operate, mode, direction, and data fields will be null<p>
+
+    <h1>Supported Commands</h1>
+    <p id="commands"></p>
+    <script type="text/javascript">
+        //var devices = require("../devices/deviceList.js");
+        document.getElementById("commands").innerHTML = "HEYYYYYYYYY";
+        //for(var key in devices.list) {
+        //    document.getElementById("commands").innerHTML = key;
+        //}
+    </script>
 </script>
