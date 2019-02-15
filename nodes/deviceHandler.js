@@ -15,16 +15,15 @@ module.exports = function(RED)
             "type": node.type,
             "deviceType": deviceType,
             "subnetId": subnetId,
-            "deviceId": deviceId,
-            "network": network.information
+            "deviceId": deviceId
         };
         var msgFunctionCallbacks = [];
 
         //Check all relevent variables are present
-        if(network == null) {node.error("[Critical] - HDL network is not set");}
-        if(deviceType == null) {node.error("[Critical] - Device Type is not set");}
-        if(subnetId == null) {node.error("[Critical] - Subnet ID is not set");}
-        if(deviceId == null) {node.error("[Critical] - Device ID is not set");}
+        if(network == null) {node.error("[Critical] - HDL network is not set"); return;}
+        if(deviceType == null) {node.error("[Critical] - Device Type is not set"); return;}
+        if(subnetId == null) {node.error("[Critical] - Subnet ID is not set"); return;}
+        if(deviceId == null) {node.error("[Critical] - Device ID is not set"); return;}
 
         //Pass all network statuses to the subscribed nodes
         network.addStatusCallback(function(colour, message, extraInformation) {
@@ -34,7 +33,7 @@ module.exports = function(RED)
         node.on("close", function() {
         });
 
-        //Send a status to all other nodes that are subscribed to the status updates
+        //Send a status to all other nodes that are subscribed to the status updates (Appears on the flow)
         node.sendStatus = function(colour, message, extraInformation = "none") {
             for(var i = 0; i < msgFunctionCallbacks.length; i++) {
                 msgFunctionCallbacks[i](colour, message, extraInformation);

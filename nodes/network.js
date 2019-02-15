@@ -457,6 +457,7 @@ module.exports = function(RED)
             return server;
         }
 
+        //Send a message to the subscribed nodes (appears on the flow)
         node.sendStatus = function(colour, message, extraInformation = "none") {
             for(var i = 0; i < msgFunctionCallbacks.length; i++) {
                 msgFunctionCallbacks[i](colour, message, extraInformation);
