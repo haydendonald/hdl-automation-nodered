@@ -36,9 +36,8 @@ module.exports = function(RED)
         var name = config.name;
         var localSubnet = config.localSubnet;
         var localDeviceId = config.localDeviceId;
+        var localIpAddress = "0.0.0.0";
         var ipAddress = config.ipAddress;
-        var localIpAddress = config.localIpAddress;
-        var checkIP = config.checkIP;
         var port = config.port;
         var connected = false;
         var server = connect(ipAddress, port);
@@ -47,9 +46,6 @@ module.exports = function(RED)
             "type": node.type,
             "localSubnet": localSubnet,
             "localDeviceId": localDeviceId,
-            "ipAddress": ipAddress,
-            "localIpAddress": localIpAddress,
-            "checkIP": checkIP,
             "port": port,
             "connected": connected
         }
@@ -68,9 +64,6 @@ module.exports = function(RED)
         //Check for missing variables
         if(localSubnet == null) {node.error("[Critical] - Local subnet is not set"); return;}
         if(localDeviceId == null) {node.error("[Critical] - Local device id is not set"); return;}
-        if(ipAddress == null) {node.error("[Critical] - IP Address is not set"); return;}
-        if(localIpAddress == null) {node.error("[Critical] - Local ip address is not set"); return;}
-        if(checkIP == null) {node.error("[Critical] - Check IP is not set"); return;}
         if(port == null) {node.error("[Critical] - Port is not set"); return;}
         if(server == null) {node.error("[Critical] - Server is not set"); return;}
 
