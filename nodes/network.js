@@ -1,11 +1,7 @@
 /*
 The main network node for the bus communication.
 
-This node needs to be referenced by other nodes in order to communicate correctly. 
-The following functions are supported:
-
--   send(command, targetSubnetID, targetDeviceID, Contents, answerbackHandler(command, receivedSubnetID, receivedDeviceID, contents))
--   addIncomingHandler(handler(command, receivedSubnetID, receivedDeviceID, contents))
+This node needs to be referenced by other nodes in order to communicate correctly.
 
 */
 var debug = true;
@@ -77,13 +73,13 @@ module.exports = function(RED)
         });
 
         //Check for missing variables
-        if(localSubnet == null) {node.error("[Critical] - Local subnet is not set");}
-        if(localDeviceId == null) {node.error("[Critical] - Local device id is not set");}
-        if(ipAddress == null) {node.error("[Critical] - IP Address is not set");}
-        if(localIpAddress == null) {node.error("[Critical] - Local ip address is not set");}
-        if(checkIP == null) {node.error("[Critical] - Check IP is not set");}
-        if(port == null) {node.error("[Critical] - Port is not set");}
-        if(server == null) {node.error("[Critical] - Server is not set");}
+        if(localSubnet == null) {node.error("[Critical] - Local subnet is not set"); return;}
+        if(localDeviceId == null) {node.error("[Critical] - Local device id is not set"); return;}
+        if(ipAddress == null) {node.error("[Critical] - IP Address is not set"); return;}
+        if(localIpAddress == null) {node.error("[Critical] - Local ip address is not set"); return;}
+        if(checkIP == null) {node.error("[Critical] - Check IP is not set"); return;}
+        if(port == null) {node.error("[Critical] - Port is not set"); return;}
+        if(server == null) {node.error("[Critical] - Server is not set"); return;}
         
         //Initally check if we have a successful connection
         checkConnection(function(status) {
