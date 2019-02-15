@@ -12,8 +12,8 @@ var udp = require('dgram');
 var crc = require('crc').crc16xmodem;
 var ping = require("ping");
 
-var functions = require("../devices/functions/functionList.js");
-var devices = require("../devices/deviceList.js");
+var functions = require("../HDL/functions/functionList.js");
+var devices = require("../HDL/devices/deviceList.js");
 
 module.exports = function(RED)
 {
@@ -23,19 +23,18 @@ module.exports = function(RED)
         //Debug startup
         if(debug) {
             console.log("-------------- Functions --------------");
+            console.log("");
             for(var key in functions.list) {
                 console.log(functions.list[key].name + "[" + key + "]" + " - " + functions.list[key].description + " (" + functions.list[key].status + ")");
              }
             console.log("");
             console.log("-------------- Devices --------------");
-             for(var key in devices.list) {
-                 console.log(devices.list[key].name + "[" + key + "]" + " - " + devices.list[key].description + " (" + devices.list[key].status + ")");
-                 console.log("  Functions: ");
-                 for(var key2 in devices.list[key].functions) {
-                    console.log("   " + devices.list[key].functions[key2].name + "[" + key + "]" + " - " + devices.list[key].functions[key2].description + " (" + devices.list[key].functions[key2].status + ")");
-                 }
-                 console.log("");
-              }
+            console.log("");
+            for(var key in devices.list) {
+              console.log(devices.list[key].name + "[" + key + "]" + " - " + devices.list[key].description);
+            }
+            console.log("");
+            console.log("");
         }
 
         RED.nodes.createNode(this, config);
@@ -80,7 +79,7 @@ module.exports = function(RED)
         if(checkIP == null) {node.error("[Critical] - Check IP is not set"); return;}
         if(port == null) {node.error("[Critical] - Port is not set"); return;}
         if(server == null) {node.error("[Critical] - Server is not set"); return;}
-        
+
         //Initally check if we have a successful connection
         checkConnection(function(status) {
             if(status) {
@@ -97,7 +96,7 @@ module.exports = function(RED)
             //Update the information variable
             node.information.connected = connected;
         });
-       
+
         //When the server is open ping the IP address every minute to determine connection status
         var pingInterval = setInterval(function() {
             checkConnection(function(status) {
@@ -162,7 +161,7 @@ module.exports = function(RED)
                 node.error("Command out of range: " + command);
                 node.sendStatus("red", "Internal Error", "Out of Range Parameter");
                 return false;
-            }    
+            }
             if(targetDeviceID < 0 || targetDeviceID > 254) {
                 node.error("Target device ID out of range: " + targetDeviceID);
                 node.sendStatus("red", "Internal Error", "Out of Range Parameter");
@@ -177,7 +176,7 @@ module.exports = function(RED)
                 node.error("Target device ID out of range: " + targetDeviceID);
                 node.sendStatus("red", "Internal Error", "Out of Range Parameter");
                 return false;
-            }      
+            }
 
             //Create the ip address buffer
             var ipBuffer = new Buffer.alloc(4);
@@ -200,8 +199,8 @@ module.exports = function(RED)
                 node.error("Data package size incorrect: " + length);
                 node.sendStatus("red", "Internal Error", "Data package size incorrect");
                 return false;
-            }   
- 
+            }
+
             var dataBuffer = new Buffer.alloc(9);
             dataBuffer.writeUInt8(length, 0);
             dataBuffer.writeUInt8(localSubnet, 1);
@@ -350,7 +349,7 @@ module.exports = function(RED)
             //Target Subnet ID (Equal to local, or global 255 value)
             if(!(message[23] == localSubnet || message[23] == 255)){wasSentToThisDevice = false;}
             //Target Device ID (Equal to local, or global 255 value)
-            if(!(message[24] == localDeviceId || message[24] == 255)){wasSentToThisDevice = false;}  
+            if(!(message[24] == localDeviceId || message[24] == 255)){wasSentToThisDevice = false;}
 
             //CRC Code
             var crcValue = message.readUInt16BE(message.length -2);
@@ -379,7 +378,7 @@ module.exports = function(RED)
                     "mode": null,
                     "direction": null,
                     "data": null,
-                    "contents": contents         
+                    "contents": contents
                 }
             }
 
