@@ -13,7 +13,6 @@ var crc = require('crc').crc16xmodem;
 var ping = require("ping");
 
 var functions = require("../HDL/functions/functionList.js");
-var devices = require("../HDL/devices/deviceList.js");
 
 module.exports = function(RED)
 {
@@ -27,13 +26,6 @@ module.exports = function(RED)
             for(var key in functions.list) {
                 console.log(functions.list[key].name + "[" + key + "]" + " - " + functions.list[key].description + " (" + functions.list[key].status + ")");
              }
-            console.log("");
-            console.log("-------------- Devices --------------");
-            console.log("");
-            for(var key in devices.list) {
-              console.log(devices.list[key].name + "[" + key + "]" + " - " + devices.list[key].description);
-            }
-            console.log("");
             console.log("");
         }
 
