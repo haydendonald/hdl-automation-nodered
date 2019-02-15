@@ -6,8 +6,25 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-deviceHandler"><i class="icon-bookmark"></i> Device</label>
-        <input type="text" id="node-input-deviceHandler">
+        <label for="node-input-subnetId"><i class="icon-bookmark"></i> Subnet</label>
+        <input type="text" id="node-input-subnetId">
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="icon-bookmark"></i> ID</label>
+        <input type="text" id="node-input-deviceId">
+    </div>
+    <div class="form-row">
+        <label for="node-input-network"><i class="icon-bookmark"></i> Controller</label>
+        <input type="text" id="node-input-network">
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputMode"><i class="icon-tag"></i> Output Mode:</label>
+        <select id="node-input-outputMode">
+            <option value=""></option>
+            <option value="answerback">Only output answer back</option>
+            <option value="local">Output all messages sent from the device to this PC</option>
+            <option value="all">Output all messages sent from the device</option>
+        </select>
     </div>
 </script>
 
@@ -18,7 +35,10 @@
         color: '#25A6FF',
         defaults: {
             name: {value: ""},
-            deviceHandler: {value: "", type: "hdl-deviceHandler"}
+            subnetId: {required: true, validate: RED.validators.number()},
+            deviceId: {required: true, validate: RED.validators.number()},
+            network: {value: "", type: "hdl-network"},
+            outputMode: {value: "answerBack", required: true}
         },
         inputs: 1,
         outputs: 1,

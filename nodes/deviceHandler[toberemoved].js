@@ -7,27 +7,33 @@ module.exports = function(RED)
         var network = RED.nodes.getNode(config.network);
         var node = this;
         var name = config.name;
-        var deviceType = config.deviceType;
         var subnetId = config.subnetId;
         var deviceId = config.deviceId;
         node.information = {
             "name": name,
             "type": node.type,
-            "deviceType": deviceType,
             "subnetId": subnetId,
             "deviceId": deviceId
         };
         var msgFunctionCallbacks = [];
+        var hdlMessageCallbacks = [];
 
         //Check all relevent variables are present
         if(network == null) {node.error("[Critical] - HDL network is not set"); return;}
-        if(deviceType == null) {node.error("[Critical] - Device Type is not set"); return;}
         if(subnetId == null) {node.error("[Critical] - Subnet ID is not set"); return;}
         if(deviceId == null) {node.error("[Critical] - Device ID is not set"); return;}
 
         //Pass all network statuses to the subscribed nodes
         network.addStatusCallback(function(colour, message, extraInformation) {
             node.sendStatus(colour, message, extraInformation);
+        });
+
+        //Handle incoming HDL messages
+        network.addHDLMessageCallback(function(packet, sentTo) {
+          var wasSentByDevice = (packet.payload.sender.subnetId == subnetId && packet.payload.sender.deviceId == deviceId);
+          for(var i = 0; i < hdlMessageCallbacks.length; i++) {
+            hdlMessageCallbacks[i](packet, sentTo, wasSentByDevice);
+          }
         });
 
         node.on("close", function() {
@@ -40,10 +46,9 @@ module.exports = function(RED)
             }
         }
 
-        //External functions
-        node.addStatusCallback = function(func) {
-            msgFunctionCallbacks.push(func);
-        }
+        //Add callback methods
+        node.addStatusCallback = function(func) {msgFunctionCallbacks.push(func);}
+        node.addHDLMessageCallback = function(func) {hdlMessageCallbacks.push(func);}
     }
 
     RED.nodes.registerType("hdl-deviceHandler", DeviceHandler);

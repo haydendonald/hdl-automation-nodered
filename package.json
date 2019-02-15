@@ -12,7 +12,6 @@
   "node-red": {
     "nodes": {
       "HDLNetwork": "./nodes/network.js",
-      "DeviceHandler": "./nodes/deviceHandler.js",
       "Device": "./nodes/device.js",
       "Bus": "./nodes/bus.js"
     }

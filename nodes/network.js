@@ -27,6 +27,8 @@ module.exports = function(RED)
                 console.log(functions.list[key].name + "[" + key + "]" + " - " + functions.list[key].description + " (" + functions.list[key].status + ")");
              }
             console.log("");
+            console.log("---------------------------------------")
+            console.log("");
         }
 
         RED.nodes.createNode(this, config);

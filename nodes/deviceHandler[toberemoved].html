@@ -6,13 +6,6 @@
         <input type="text" id="node-config-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-deviceType"><i class="icon-bookmark"></i> Device Type</label>
-        <select id="node-config-input-deviceType">
-            <option value=""></option>
-        </select>
-        <!--<input type="text" id="node-config-input-deviceType">-->
-    </div>
-    <div class="form-row">
         <label for="node-config-input-subnetId"><i class="icon-bookmark"></i> Subnet</label>
         <input type="text" id="node-config-input-subnetId">
     </div>
@@ -32,7 +25,6 @@
         category: 'config',
         defaults: {
             name: {value: ""},
-            deviceType: {required: true},
             subnetId: {required: true, validate: RED.validators.number()},
             deviceId: {required: true, validate: RED.validators.number()},
             network: {value: "", type: "hdl-network"}
