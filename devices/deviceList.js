@@ -2,7 +2,7 @@
     The currently supported devices linked to their relevent source
 */
 
-module.exports = {
+var deviceList = {
     list: {
         65534: {
             "status": "Not Supported",

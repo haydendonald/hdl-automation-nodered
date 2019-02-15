@@ -1,48 +1,5 @@
-
-<!-- Settings Panel -->
-<script type="text/x-red" data-template-name="hdl-bus">
-    <div class="form-row">
-        <label for="node--input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node--input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-outputMode"><i class="icon-tag"></i> Output Mode:</label>
-        <select id="node-input-outputMode">
-            <option value=""></option>
-            <option value="answerback">Only output answer back</option>
-            <option value="local">Output all messages sent to this device</option>
-            <option value="all">Output all messages</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <label for="node-input-network"><i class="icon-bookmark"></i> Network</label>
-        <input type="text" id="node-input-network">
-    </div>
-</script>
-
-<!-- Register -->
-<script type="text/javascript">
-    RED.nodes.registerType('hdl-bus', {
-        category: 'HDL',
-        color: '#25FFCA',
-        defaults: {
-            name: {value: ""},
-            outputMode: {value: "answerBack", required: true},
-            network: {value: "", type: "hdl-network"}
-        },
-        inputs: 1,
-        outputs: 1,
-        align: "right",
-        icon: "./logo.png",
-        paletteLabel: "Bus",
-        label: function() {
-            return this.name||"HDL Bus";
-        }
-    });
-</script>
-
 <!-- Information Panel -->
-<script type="text/x-red" data-help-name="hdl-bus">
+<script id="hdl-info-panel" type="text/x-red" data-help-name="hdl-bus">
     <h1>HDL Bus</h1>
     <h2>The HDL bus node provides direct connection to the HDL bus.</h2>
     <h2>Settings</h2>
@@ -104,14 +61,46 @@
         }
     </xmp>
     <p>However if the command is not supported the operate, mode, direction, and data fields will be null<p>
+</script>
 
-    <h1>Supported Commands</h1>
-    <p id="commands"></p>
-    <script type="text/javascript">
-        //var devices = require("../devices/deviceList.js");
-        document.getElementById("commands").innerHTML = "HEYYYYYYYYY";
-        //for(var key in devices.list) {
-        //    document.getElementById("commands").innerHTML = key;
-        //}
-    </script>
+<!-- Settings Panel -->
+<script type="text/x-red" data-template-name="hdl-bus">
+    <div class="form-row">
+        <label for="node--input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node--input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputMode"><i class="icon-tag"></i> Output Mode:</label>
+        <select id="node-input-outputMode">
+            <option value=""></option>
+            <option value="answerback">Only output answer back</option>
+            <option value="local">Output all messages sent to this device</option>
+            <option value="all">Output all messages</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-network"><i class="icon-bookmark"></i> Network</label>
+        <input type="text" id="node-input-network">
+    </div>
+</script>
+
+<!-- Register -->
+<script type="text/javascript">
+    RED.nodes.registerType('hdl-bus', {
+        category: 'HDL',
+        color: '#25FFCA',
+        defaults: {
+            name: {value: ""},
+            outputMode: {value: "answerBack", required: true},
+            network: {value: "", type: "hdl-network"}
+        },
+        inputs: 1,
+        outputs: 1,
+        align: "right",
+        icon: "hdl.png",
+        paletteLabel: "Bus",
+        label: function() {
+            return this.name||"HDL Bus";
+        }
+    });
 </script>
