@@ -1,29 +1,27 @@
 module.exports = {
-    status: "Not complete",
-    name: "Scene Control",
-    description: "Scene control selects a scene within a area",
+    status: "To be tested",
+    name: "Single Channel Control",
+    description: "Controls a single channel",
 
     actions: {
         set: {
-            request: 0x0002,
-            answerBack: 0x0003,
+            request: 0x0031,
+            answerBack: 0x0032,
             processData: function(data) {
-              var channelBits = {};
-              for(var i = 1; i < data[2]; i++) {
-                channelBits["channel" + i] = data[2 + i];
-              }
-
                 return {
-                    "areaNumber": data[0],
+                    "channelNo": data[0],
                     "sceneNumber": data[1],
                     "totalChannelNumber": data[2],
                     "channelStatusBit": channelBits
                 }
             },
             generateData: function(data) {
-                if (typeof data.areaNumber != 'number'){ return "Invalid area number: " + data.areaNumber; }
-                if (typeof data.sceneNumber != 'number'){ return "Invalid scene number: " + data.sceneNumber; }
-                return Buffer.from([data.areaNumber, data.sceneNumber]);
+                if (typeof data.channelNo != 'number'){ return "Invalid channel number: " + data.channelNo; }
+                if (typeof data.channelLevel != 'number'){ return "Invalid channel level: " + data.channelLevel; }
+                if (typeof data.runningTime != 'number'){ return "Invalid running time: " + data.runningTime; }
+                var runningTime = Buffer.alloc(2);
+                runningTime.writeUInt16BE(data.runningTime);
+                return Buffer.from([data.channelNo, data.channelLevel, runningTime[0], runningTime[1]]);
             }
         },
 
