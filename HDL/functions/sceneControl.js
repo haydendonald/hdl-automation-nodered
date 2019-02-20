@@ -43,7 +43,7 @@ module.exports = {
         },
 
         broadcast: {
-            request: 0xEFFFF,
+            request: 0xEFFF,
             answerBack: 0xFFFF,
             processData: function(data) {
               var areaScenes = {};
