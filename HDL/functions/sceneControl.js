@@ -1,5 +1,5 @@
 module.exports = {
-    status: "Not complete",
+    status: "To be tested",
     name: "Scene Control",
     description: "Scene control selects a scene within a area",
 
