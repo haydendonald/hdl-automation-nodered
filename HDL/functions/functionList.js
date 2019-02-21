@@ -3,7 +3,8 @@ module.exports = {
         sceneControl: require("./sceneControl.js"),
         UVSwitch: require("./UVSwitch.js"),
         dateTime: require("./dateTime.js"),
-        sequenceControl: require("./sequenceControl.js")
+        sequenceControl: require("./sequenceControl.js"),
+        panelControl: require("./panelControl.js")
     },
 
     //Find the opCode of a function
