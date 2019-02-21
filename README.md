@@ -14,7 +14,10 @@ My aims with this project is to
 - Provide a better method of passing raw commands [Done]
 - Provide a easier way to add commands [Done]
 - Support the most used commands [In progress]
+<<<<<<< HEAD
 - Add search for device when deploy so that the "connected" status depicts the device not the network (device node)
+=======
+>>>>>>> 488a34c02c31a80aea8d4f82f0a058321e905427
 
 ## Supported Commands
 - Scene Control
