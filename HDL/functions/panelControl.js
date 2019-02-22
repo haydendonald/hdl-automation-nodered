@@ -1,5 +1,5 @@
 module.exports = {
-    status: "Testing",
+    status: "Stable",
     name: "Panel Control",
     description: "Panel control controls a wall panel",
 
