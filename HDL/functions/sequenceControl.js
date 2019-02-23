@@ -1,5 +1,5 @@
 module.exports = {
-    status: "To be tested",
+    status: "Testing",
     name: "Sequence Control",
     description: "Control sequences",
     actions: {
