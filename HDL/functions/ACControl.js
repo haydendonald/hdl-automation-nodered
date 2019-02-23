@@ -12,12 +12,12 @@ module.exports = {
               if(data[1] == 0){tempType = "C";}else if(data[1] == 1){tempType = "F";}else{tempType = data[1];}
               var ret = {
                 "ACNumber": data[0],
-                "tempType": tempType,
+                "temperatureType": tempType,
                 "currentTemperature": data[2],
-                "coolingTempPoint": data[3],
-                "heatingTempPoint": data[4],
-                "autoTempPoint": data[5],
-                "dryTempPoint": data[6],
+                "coolingTemperaturePoint": data[3],
+                "heatingTemperaturePoint": data[4],
+                "autoTemperaturePoint": data[5],
+                "dryTemperaturePoint": data[6],
               }
 
               //Split mode and fan byte into their parts

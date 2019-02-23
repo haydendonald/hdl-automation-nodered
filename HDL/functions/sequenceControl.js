@@ -18,7 +18,7 @@ module.exports = {
                 if(data.areaNumber < 1 || data.areaNumber > 255){return "Invalid area number: " + data.areaNumber + ". This is expected to be a number between 1 and 255"}
                 if(data.sequenceNumber < 0 || data.sequenceNumber > 255){return "Invalid sequence number: " + data.sequenceNumber + ". This is expected to be a number between 0 and 255"}
 
-                return Buffer.from([data.areaNumber, data.sequence]);
+                return Buffer.from([data.areaNumber, data.sequenceNumber]);
             }
         },
 
@@ -42,12 +42,14 @@ module.exports = {
             request: 0xF036,
             answerBack: 0xFFFF,
             processData: function(data) {
-              var areaSequences = {};
+              var areaSequences = {
+                "sequenceInArea": undefined
+              };
 
               //Get area scenes
               for(var i = 0; true; i++) {
                 if(data[i] === null || data[i] === undefined){break;}
-                areaScenes["area" + (i + 1)] = data[i];
+                areaSequences.sequenceInArea[(i + 1)] = data[i];
               }
 
                 return areaSequences

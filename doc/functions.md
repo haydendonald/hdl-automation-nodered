@@ -13,6 +13,16 @@ Scene control selects a scene within a area
   - **areaScenes** The scene for each area
   - **channelLevels** The level of each channel within a area
 
+# Sequence Control
+Sequence control selects a sequence within a area
+- **operate** = "sequenceControl"
+- **mode** = "set/get" (Set sets the value, get gets the value)
+- **direction** = "request/answerBack" (Request asks for the current value, answerBack is the reply for the request)
+- **data**
+  - **areaNumber** The area number to select
+  - **sequenceNumber** The sequence number to select
+  - **sequenceInArea** The sequence number active within a area
+
 # Panel Control
   Panel control controls a wall panel
   - **operate** = "panelControl"
@@ -80,3 +90,27 @@ Scene control selects a scene within a area
         - **panelData** = 0-84
       - "awaytemp"
         - **panelData** = 0-84
+
+# AC Control
+AC control controls a air conditioner
+- **operate** = "ACControl"
+- **mode** = "set/get" (Set sets the value, get gets the value)
+- **direction** = "request/answerBack" (Request asks for the current value, answerBack is the reply for the request)
+- **data**
+  - **ACNumber** The AC number to control
+  - **temperatureType** The temperature type. Either C or F
+  - **currentTemperature** The current temperature reported by the AC sensor
+  - **coolingTemperaturePoint** The aimed cooling temperature
+  - **heatingTemperaturePoint** The aimed heating temperature
+  - **autoTemperaturePoint** The aimed auto temperature
+  - **dryTemperaturePoint** The aimed dry temperature
+  - **coolingTemperaturePoint** The aimed cooling temperature
+  - **fan** The fan state = 'auto', 'high', 'medium', 'low'
+  - **mode** The mode state = 'cooling', 'heating', 'fan', 'auto', 'dry'
+  - **ACStatus** The current power of the AC = 'on', 'off'
+  - **SetupMode** The setup mode of the AC = 'cooling', 'heating', 'fan', 'auto', 'dry'
+  - **SetupSpeed** The setup speed of the AC = 'auto', 'high', 'medium', 'low'
+  - **currentFan** The current fan = 'auto', 'high', 'medium', 'low'
+  - **currentMode** The the current mode = 'cooling', 'heating', 'fan', 'auto', 'dry'
+  - **sweepEnable** Whether the sweep is enabled = 'on', 'off'
+  - **sweepNow** If the AC is currently sweeping = 'on', 'off'
