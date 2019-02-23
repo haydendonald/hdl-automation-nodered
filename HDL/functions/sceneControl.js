@@ -23,6 +23,8 @@ module.exports = {
             generateData: function(data) {
                 if (typeof data.areaNumber != 'number'){ return "Invalid area number: " + data.areaNumber; }
                 if (typeof data.sceneNumber != 'number'){ return "Invalid scene number: " + data.sceneNumber; }
+                if(data.areaNumber < 1 || data.areaNumber > 255){return "Invalid area number: " + data.areaNumber + ". This is expected to be a number between 1 and 255"}
+                if(data.sceneNumber < 0 || data.sceneNumber > 255){return "Invalid scene number: " + data.sceneNumber + ". This is expected to be a number between 0 and 255"}
                 return Buffer.from([data.areaNumber, data.sceneNumber]);
             }
         },
@@ -38,6 +40,7 @@ module.exports = {
             },
             generateData: function(data) {
                 if (typeof data.areaNumber != 'number'){ return "Invalid area number: " + data.areaNumber; }
+                if(data.areaNumber < 1 || data.areaNumber > 255){return "Invalid area number: " + data.areaNumber + ". This is expected to be a number between 1 and 255"}
                 return Buffer.from([data.areaNumber]);
             }
         },
