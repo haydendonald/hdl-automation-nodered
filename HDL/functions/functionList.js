@@ -4,7 +4,8 @@ module.exports = {
         UVSwitch: require("./UVSwitch.js"),
         dateTime: require("./dateTime.js"),
         sequenceControl: require("./sequenceControl.js"),
-        panelControl: require("./panelControl.js")
+        panelControl: require("./panelControl.js"),
+        ACControl: require("./ACControl.js")
     },
 
     //Find the opCode of a function

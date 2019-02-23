@@ -1,5 +1,5 @@
 module.exports = {
-    status: "Development",
+    status: "Testing",
     name: "AC Control",
     description: "Controls AC units",
 
@@ -119,20 +119,23 @@ module.exports = {
               if (typeof data.ACNumber != 'number' || data.ACNumber < 1 || data.ACNumber > 128) {
                 return "Invalid AC number: " + data.ACNumber + ". Expects a number between 1 and 128";
               }
-              if (typeof data.coolingTempPoint != 'number' || data.coolingTempPoint < 0 || data.coolingTempPoint > 86) {
-                return "Invalid cooling temperature point: " + data.coolingTempPoint + ". Expects a number between 0 and 86";
+              if (typeof data.coolingTemperaturePoint != 'number' || data.coolingTemperaturePoint < 0 || data.coolingTemperaturePoint > 86) {
+                return "Invalid cooling temperature point: " + data.coolingTemperaturePoint + ". Expects a number between 0 and 86";
               }
-              if (typeof data.heatingTempPoint != 'number' || data.heatingTempPoint < 0 || data.heatingTempPoint > 86) {
-                return "Invalid heating temperature point: " + data.heatingTempPoint + ". Expects a number between 0 and 86";
+              if (typeof data.heatingTemperaturePoint != 'number' || data.heatingTemperaturePoint < 0 || data.heatingTemperaturePoint > 86) {
+                return "Invalid heating temperature point: " + data.heatingTemperaturePoint + ". Expects a number between 0 and 86";
               }
-              if (typeof data.autoTempPoint != 'number' || data.autoTempPoint < 0 || data.autoTempPoint > 86) {
-                return "Invalid auto temperature point: " + data.autoTempPoint + ". Expects a number between 0 and 86";
+              if (typeof data.autoTemperaturePoint != 'number' || data.autoTemperaturePoint < 0 || data.autoTemperaturePoint > 86) {
+                return "Invalid auto temperature point: " + data.autoTemperaturePoint + ". Expects a number between 0 and 86";
               }
-              if (typeof data.dryTempPoint != 'number' || data.dryTempPoint < 0 || data.dryTempPoint > 86) {
-                return "Invalid dry temperature point: " + data.dryTempPoint + ". Expects a number between 0 and 86";
+              if (typeof data.dryTemperaturePoint != 'number' || data.dryTemperaturePoint < 0 || data.dryTemperaturePoint > 86) {
+                return "Invalid dry temperature point: " + data.dryTemperaturePoint + ". Expects a number between 0 and 86";
               }
 
               var temperatureType = 0;
+              if(data.temperatureType == null || data.temperatureType == undefined) {
+                return "Invalid temperature type: " + data.temperatureType + ". Expects 'C' or 'F'";
+              }
               switch(data.temperatureType.toLowerCase()) {
                 case "c": {temperatureType = 0; break;}
                 case "f": {temperatureType = 1; break;}
@@ -143,6 +146,9 @@ module.exports = {
 
               var mode = 0;
               var fan = 0;
+              if(data.mode == null || data.mode == undefined) {
+                return "Invalid mode: " + data.mode + ". Expects 'cooling', 'heating', 'fan', 'auto', or 'dry'";
+              }
               switch(data.mode.toLowerCase()) {
                 case "cooling": {mode = 0; break;}
                 case "heating": {mode = 1; break;}
@@ -152,6 +158,10 @@ module.exports = {
                 default: {
                   return "Invalid mode: " + data.mode + ". Expects 'cooling', 'heating', 'fan', 'auto', or 'dry'";
                 }
+              }
+
+              if(data.fan == null || data.fan == undefined) {
+                return "Invalid fan: " + data.fan + ". Expects 'auto', 'high', 'medium', or 'low'";
               }
               switch(data.fan.toLowerCase()) {
                 case "auto": {fan = 0; break;}
@@ -164,6 +174,9 @@ module.exports = {
               }
               var encodedModeFanByte = fan + (mode << 5); //may or may not work
 
+              if(data.ACStatus == null || data.ACStatus == undefined) {
+                return "Invalid AC status: " + data.ACStatus + ". Expects 'on', or 'off'";
+              }
               var acStatus = 0;
               switch(data.ACStatus.toLowerCase()) {
                 case "off": {acStatus = 0; break;}
@@ -173,6 +186,9 @@ module.exports = {
                 }
               }
 
+              if(data.setupMode == null || data.setupMode == undefined) {
+                return "Invalid setup mode: " + data.setupMode + ". Expects 'cooling', 'heating', 'fan', 'auto', or 'dry'";
+              }
               var setupMode = 0;
               switch(data.setupMode.toLowerCase()) {
                 case "cooling": {setupMode = 0; break;}
@@ -185,6 +201,9 @@ module.exports = {
                 }
               }
 
+              if(data.setupSpeed == null || data.setupSpeed == undefined) {
+                return "Invalid setup speed: " + data.setupSpeed + ". Expects 'auto', 'high', 'medium', or 'low'";
+              }
               var setupSpeed = 0;
               switch(data.setupSpeed.toLowerCase()) {
                 case "auto": {setupSpeed = 0; break;}
@@ -196,7 +215,7 @@ module.exports = {
                 }
               }
 
-              return Buffer.from([data.ACNumber, temperatureType, data.coolingTempPoint, data.heatingTempPoint, data.autoTempPoint, data.dryTempPoint, mode, fan, acStatus, setupMode, setupSpeed]);
+              return Buffer.from([data.ACNumber, temperatureType, data.coolingTemperaturePoint, data.heatingTemperaturePoint, data.autoTemperaturePoint, data.dryTemperaturePoint, mode, fan, acStatus, setupMode, setupSpeed]);
             }
         },
 
@@ -208,12 +227,12 @@ module.exports = {
               if(data[1] == 0){tempType = "C";}else if(data[1] == 1){tempType = "F";}else{tempType = data[1];}
               var ret = {
                 "ACNumber": data[0],
-                "tempType": tempType,
+                "temperatureType": tempType,
                 "currentTemperature": data[2],
-                "coolingTempPoint": data[3],
-                "heatingTempPoint": data[4],
-                "autoTempPoint": data[5],
-                "dryTempPoint": data[6],
+                "coolingTemperaturePoint": data[3],
+                "heatingTemperaturePoint": data[4],
+                "autoTemperaturePoint": data[5],
+                "dryTemperaturePoint": data[6],
               }
 
               //Split mode and fan byte into their parts
@@ -326,12 +345,12 @@ module.exports = {
               if(data[1] == 0){tempType = "C";}else if(data[1] == 1){tempType = "F";}else{tempType = data[1];}
               var ret = {
                 "ACNumber": data[0],
-                "tempType": tempType,
+                "temperatureType": tempType,
                 "currentTemperature": data[2],
-                "coolingTempPoint": data[3],
-                "heatingTempPoint": data[4],
-                "autoTempPoint": data[5],
-                "dryTempPoint": data[6],
+                "coolingTemperaturePoint": data[3],
+                "heatingTemperaturePoint": data[4],
+                "autoTemperturePoint": data[5],
+                "dryTemperaturePoint": data[6],
               }
 
               //Split mode and fan byte into their parts
