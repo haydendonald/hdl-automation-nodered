@@ -40,7 +40,7 @@ module.exports = {
                 if (typeof data.channelLevel != 'number'){ return "Invalid channel level: " + data.channelLevel; }
                 if (typeof data.runningTime != 'number'){ return "Invalid running time: " + data.runningTime; }
                 if(data.channelNumber < 1 || data.channelNumber > 255){return "Invalid channel number: " + data.channelNumber + ". This is expected to be a number between 1 and 255";}
-                if(data.channelLevel < 0 || data.channelNumber > 100){return "Invalid channel level: " + data.channelLevel + ". This is expected to be a number between 0 and 100";}
+                if(data.channelLevel < 0 || data.channelLevel > 100){return "Invalid channel level: " + data.channelLevel + ". This is expected to be a number between 0 and 100";}
                 if(data.runningTime < 0 || data.runningTime > 3600){return "Invalid running time: " + data.runningTime + ". This is expected to be a number between 0 and 3600(s)";}
 
                 var runningTime = Buffer.alloc(2);
