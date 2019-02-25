@@ -129,3 +129,16 @@ The current date and time in the HDL system
   - **minute** = 0-59
   - **second** = 0-59
   - **weekDay** = 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', or 'saturday'
+
+# Single Channel Control
+Controls a single channel
+- **operate** = "singleChannelControl"
+- **mode** = "set/get" (Set sets the value, get gets the value)
+- **direction** = "request/answerBack" (Request asks for the current value, answerBack is the reply for the request)
+- **data**
+  - **channelNumber** The channel number to control
+  - **success** Whether the channel was set successfully
+  - **channelLevel** The value to set the channel to
+  - **totalChannelNumber** The total amount of channels
+  - **channels** A list of each channel value
+  - **runningTime** The fade time
