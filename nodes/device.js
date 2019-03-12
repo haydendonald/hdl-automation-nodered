@@ -170,6 +170,7 @@ module.exports = function(RED)
               }
               else {
                   node.status({fill:"red",shape:"dot",text:"Failed"});
+                  node.error("Failed to send command: " + success);
               }
           });
         });
