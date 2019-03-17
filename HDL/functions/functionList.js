@@ -91,7 +91,7 @@ module.exports = {
                     return this.list[key].actions[key2].answerBack;
                 }
                 if(this.list[key].actions[key2].answerBack == command) {
-                    return this.list[key].actions[key2].request;
+                    return "0x0000"; //0x0000 means this is a answerBack and there isn't a reply code for a answerback
                 }
             }
         }
