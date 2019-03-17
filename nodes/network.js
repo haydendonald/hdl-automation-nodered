@@ -335,6 +335,11 @@ module.exports = function(RED)
                         //Send the packet
                         if(server && connected) {
                             server.send(sendBuffer[i].packet, port, ipAddress);
+
+                            //If this is a answerBack it does not expect a reply therefor do not add it
+                            if(sendBuffer[i].answerbackOpCode == 0x0000) {
+                              sendBuffer.pop(sendBuffer[i]);
+                            }
                         }
                         else {
                             sendBuffer[i].sender.sendStatus("red", "Failed", "Not connected");
@@ -418,7 +423,7 @@ module.exports = function(RED)
                 for(var i = 0; i < sendBuffer.length; i++) {;
                     if(sendBuffer[i].targetedSubnetId == subnetId) {
                         if(sendBuffer[i].targetedDeviceId == deviceId) {
-                            if(sendBuffer[i].answerbackOpCode == command || sendBuffer[i].answerbackOpCode == 0x00) {
+                            if(sendBuffer[i].answerbackOpCode == command || sendBuffer[i].answerbackOpCode == 0x0000) {
                                 //Success!
                                 sentTo = sendBuffer[i].sender;
                                 sendBuffer[i].answerbackHandler(true, packet);
