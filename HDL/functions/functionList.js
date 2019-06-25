@@ -11,10 +11,10 @@ module.exports = {
     //Find the opCode of a function
     findOpCode: function(func, mode, direction) {
         for(var key in this.list) {
-            if(key == func) {
+            if(key.toLowerCase() == func.toLowerCase()) {
                 //Found the functions loop though the actions and find it
                 for(var key2 in this.list[key].actions) {
-                    if(key2 == mode) {
+                    if(key2.toLowerCase() == mode.toLowerCase()) {
                         return this.list[key].actions[key2][direction];
                     }
                 }

@@ -29,7 +29,7 @@ module.exports = {
             }
         },
 
-        read: {
+        get: {
             request: 0x000C,
             answerBack: 0x000D,
             processData: function(data) {

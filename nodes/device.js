@@ -160,6 +160,7 @@ module.exports = function(RED)
           msg.payload.deviceId = parseInt(deviceId);
 
           var sendMsg = network.sendMsg(node, msg)
+          if(sendMsg == false) {return;}
 
           //Send it!
           node.status({fill:"orange",shape:"dot",text:"Sending..."});

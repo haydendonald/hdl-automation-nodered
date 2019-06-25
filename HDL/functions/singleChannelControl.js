@@ -49,7 +49,7 @@ module.exports = {
             }
         },
 
-        read: {
+        get: {
             request: 0x0033,
             answerBack: 0x0034,
             processData: function(data) {

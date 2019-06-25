@@ -45,7 +45,7 @@ module.exports = {
             }
         },
 
-        read: {
+        get: {
             request: 0xDA00,
             answerBack: 0xDA01,
             processData: function(data) {

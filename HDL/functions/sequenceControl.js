@@ -22,7 +22,7 @@ module.exports = {
             }
         },
 
-        read: {
+        get: {
             request: 0xE014,
             answerBack: 0xE015,
             processData: function(data) {

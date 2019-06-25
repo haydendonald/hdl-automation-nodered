@@ -506,7 +506,7 @@ module.exports = {
             }
         },
 
-        read: {
+        get: {
             request: 0xE3DA,
             answerBack: 0xE3DB,
             processData: function(data) {

@@ -293,6 +293,11 @@ module.exports = function(RED)
                 }
 
                 opCode = functions.findOpCode(operate, mode, direction);
+                if(opCode === undefined || opCode === null){
+                    node.error("Error: The opCode for the function " + operate + " was not found! Check the operate, direction and mode");
+                    node.sendStatus("red", "Error", "opCode not found for function");
+                    return false;
+                }
 
                 //If the contents buffer is not defined generate it otherwise we'll just send that
                 if(!Buffer.isBuffer(contents)){

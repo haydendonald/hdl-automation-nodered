@@ -30,7 +30,7 @@ module.exports = {
             }
         },
 
-        read: {
+        get: {
             request: 0xE018,
             answerBack: 0xE019,
             processData: function(data) {
