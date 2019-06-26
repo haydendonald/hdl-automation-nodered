@@ -398,8 +398,8 @@ module.exports = function(RED)
                 var subnetId = message[17];
                 var deviceId = message[18];
                 var contents = new Buffer.alloc(message[16] - 11);
-                for(i = 0; i < message[16] - 11; i++) {
-                    contents.writeUInt8(message[i + 25], i);
+                for(var j = 0; j < message[16] - 11; j++) {
+                    contents.writeUInt8(message[j + 25], j);
                 }
 
                 var func = functions.findCommand(command);
@@ -430,22 +430,22 @@ module.exports = function(RED)
 
                 //Check if the command exists in the sent items
                 var sentTo = null;
-                for(var i = 0; i < sendBuffer.length; i++) {;
-                    if(sendBuffer[i].targetedSubnetId == subnetId) {
-                        if(sendBuffer[i].targetedDeviceId == deviceId) {
-                            if(sendBuffer[i].answerbackOpCode == command || sendBuffer[i].answerbackOpCode == 0x0000) {
+                for(var j = 0; j < sendBuffer.length; j++) {;
+                    if(sendBuffer[j].targetedSubnetId == subnetId) {
+                        if(sendBuffer[j].targetedDeviceId == deviceId) {
+                            if(sendBuffer[j].answerbackOpCode == command || sendBuffer[j].answerbackOpCode == 0x0000) {
                                 //Success!
-                                sentTo = sendBuffer[i].sender;
-                                sendBuffer[i].answerbackHandler(true, packet);
-                                sendBuffer.splice(i, 1);
+                                sentTo = sendBuffer[j].sender;
+                                sendBuffer[j].answerbackHandler(true, packet);
+                                sendBuffer.splice(j, 1);
                             }
                         }
                     }
                 }
 
                 //Pass to to all nodes that are expecting to send out all data
-                for(var i = 0; i < hdlMessageCallback.length; i++) {
-                    hdlMessageCallback[i](packet, sentTo);
+                for(var j = 0; j < hdlMessageCallback.length; j++) {
+                    hdlMessageCallback[j](packet, sentTo);
                 }
 
                 receiveBuffer.splice(i, 1);

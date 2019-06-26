@@ -7,3 +7,5 @@ Added panel control functionality
 Added AC Control, Date Time, Sequence Control, Single Channel Control, and UV Switch functionality
 - 1.2.1
 Fixed a major bug that would cause a loop to occur when putting a node in series
+- 1.2.2
+Fixed a bug where the recieved buffer was not being cleared correctly
