@@ -33,3 +33,4 @@ Once this is at a stable state i'll be aiming to add the following to the projec
 - Dedicated function node(s) for the most used funtions
 
 ## Known bugs
+- Sending out the node information needs a toggle to enable it

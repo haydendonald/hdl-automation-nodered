@@ -9,7 +9,7 @@ module.exports = {
             answerBack: 0xE01D,
             processData: function(data) {
               var state = "unknown";
-              if(data[1] == 255){state = "on";}else{state = "off";}
+              if(data[1] == 0x01){state = "on";}else{state = "off";}
 
               return {
                     "switchNumber": data[0],
@@ -20,9 +20,9 @@ module.exports = {
               var switchState = 0;
               if (typeof data.switchNumber != 'number'){ return "Invalid switch number: " + data.switchNumber + ". Expected a number from 1 to 255"; }
               if (data.switchNumber < 1 || data.switchNumber > 255){return "Invalid switch number: " + data.switchNumber + ". This is expected to be a number between 1 and 255";}
-              switch(data.switchState) {
-                case "on": {switchState = 255; break;}
-                case "off": {switchState = 0; break;}
+              switch(data.switchState.toLowerCase()) {
+                case "on": {switchState = 0x01; break;}
+                case "off": {switchState = 0x00; break;}
                 default: {return "Invalid switch state: " + data.switchState + ". Expected 'on' or 'off'";}
               }
 
@@ -34,15 +34,12 @@ module.exports = {
             request: 0xE018,
             answerBack: 0xE019,
             processData: function(data) {
-              var switchState = 0;
-              switch(data.switchState) {
-                case "on": {switchState = 255; break;}
-                case "off": {switchState = 0; break;}
-                default: {return "Invalid switch state: " + data.switchState + ". Expected 'on' or 'off'";}
-              }
-                return {
+              var state = "unknown";
+              if(data[1] == 0x01){state = "on";}else{state = "off";}
+
+              return {
                     "switchNumber": data[0],
-                    "state": switchState
+                    "state": state
                 }
             },
             generateData: function(data) {
