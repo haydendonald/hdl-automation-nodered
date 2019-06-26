@@ -14,7 +14,7 @@ module.exports = {
 
               return {
                     "switchNumber": data[0],
-                    "state": data[1]
+                    "switchState": data[1]
                 }
             },
             generateData: function(data) {
@@ -43,7 +43,7 @@ module.exports = {
 
               return {
                     "switchNumber": data[0],
-                    "state": data[1]
+                    "switchState": data[1]
                 }
             },
             generateData: function(data) {

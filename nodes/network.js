@@ -107,7 +107,7 @@ module.exports = function(RED)
             });
         }, 60000);
 
-        var sendInterval = setInterval(function() {processSendBuffer();}, 1000);
+        var sendInterval = setInterval(function() {processSendBuffer();}, 100);
         var receiveInterval = setInterval(function() {processReceiveBuffer();}, 100);
 
         //Pings the server, returns true if connected
@@ -216,6 +216,7 @@ module.exports = function(RED)
                 "sender": sender,
                 "answerbackHandler": answerbackHandler,
                 "packet": finalPacket,
+                "contentsPacket": contents,
                 "targetedSubnetId": targetSubnetID,
                 "targetedDeviceId": targetDeviceID,
                 "answerbackOpCode": functions.findReplyCode(command),
@@ -223,7 +224,7 @@ module.exports = function(RED)
                 "timeout": 0
             });
 
-            processSendBuffer();
+            //processSendBuffer();
         }
 
         //Generate a message to the hdl bus that is formatted as a msg object
@@ -339,7 +340,7 @@ module.exports = function(RED)
                     }
                     else {
                         sendBuffer[i].attempts += 1;
-                        sendBuffer[i].timeout = 3;
+                        sendBuffer[i].timeout = 5;
 
                         //Send the packet
                         if(server && connected) {
@@ -434,10 +435,13 @@ module.exports = function(RED)
                     if(sendBuffer[j].targetedSubnetId == subnetId) {
                         if(sendBuffer[j].targetedDeviceId == deviceId) {
                             if(sendBuffer[j].answerbackOpCode == command || sendBuffer[j].answerbackOpCode == 0x0000) {
-                                //Success!
-                                sentTo = sendBuffer[j].sender;
-                                sendBuffer[j].answerbackHandler(true, packet);
-                                sendBuffer.splice(j, 1);
+                                //Check if the id of the data is the same
+                                if(sendBuffer[j].contentsPacket[0] == contents[0]) {
+                                    //Success!
+                                    sentTo = sendBuffer[j].sender;
+                                    sendBuffer[j].answerbackHandler(true, packet);
+                                    sendBuffer.splice(j, 1);
+                                }
                             }
                         }
                     }
