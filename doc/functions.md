@@ -150,6 +150,6 @@ Controls the state of a UV switch
 - **direction** = "request/answerBack" (Request asks for the current value, answerBack is the reply for the request)
 - **data**
   - **switchNumber** The switch number = 1-255
-  - **switchState** The state of the switch = 'on' or 'off'
+  - **switchState** 0 for off and 1 for on
   - **totalUVSwitches** The total UV switches
   - **UVSwitches** A list of each UV switch state

@@ -8,23 +8,27 @@ module.exports = {
             request: 0xE01C,
             answerBack: 0xE01D,
             processData: function(data) {
-              var state = "unknown";
-              if(data[1] == 0x01){state = "on";}else{state = "off";}
+              // var state = "unknown";
+              // if(data[1] == 0x01){state = "on";}else{state = "off";}
+
 
               return {
                     "switchNumber": data[0],
-                    "state": state
+                    "state": data[1]
                 }
             },
             generateData: function(data) {
               var switchState = 0;
               if (typeof data.switchNumber != 'number'){ return "Invalid switch number: " + data.switchNumber + ". Expected a number from 1 to 255"; }
               if (data.switchNumber < 1 || data.switchNumber > 255){return "Invalid switch number: " + data.switchNumber + ". This is expected to be a number between 1 and 255";}
-              switch(data.switchState.toLowerCase()) {
-                case "on": {switchState = 0x01; break;}
-                case "off": {switchState = 0x00; break;}
-                default: {return "Invalid switch state: " + data.switchState + ". Expected 'on' or 'off'";}
-              }
+              if (typeof data.switchState != 'number'){ return "Invalid switch state: " + data.switchState + ". Expected a number from 0 or 1"; }
+              if(data.switchState == 1){data.switchState = 255;}
+
+              // switch(data.switchState.toLowerCase()) {
+              //   case "on": {switchState = 0x01; break;}
+              //   case "off": {switchState = 0x00; break;}
+              //   default: {return "Invalid switch state: " + data.switchState + ". Expected 'on' or 'off'";}
+              // }
 
               return Buffer.from([data.switchNumber, data.switchState]);
             }
@@ -34,12 +38,12 @@ module.exports = {
             request: 0xE018,
             answerBack: 0xE019,
             processData: function(data) {
-              var state = "unknown";
-              if(data[1] == 0x01){state = "on";}else{state = "off";}
+              // var state = "unknown";
+              // if(data[1] == 0x01){state = "on";}else{state = "off";}
 
               return {
                     "switchNumber": data[0],
-                    "state": state
+                    "state": data[1]
                 }
             },
             generateData: function(data) {
