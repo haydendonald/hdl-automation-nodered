@@ -61,6 +61,10 @@ module.exports = function(RED)
             clearInterval(pingInterval);
             clearInterval(sendInterval);
             clearInterval(receiveInterval);
+            hdlMessageCallback = [];
+            msgFunctionCallbacks = [];
+            sendBuffer = [];
+            receiveBuffer = [];
         });
 
         //Check for missing variables
@@ -331,7 +335,7 @@ module.exports = function(RED)
                     if(sendBuffer[i].attempts > 3) {
                         //Failed
                         sendBuffer[i].sender.sendStatus("red", "Failed", "timeout");
-                        sendBuffer.pop(sendBuffer[i]);
+                        sendBuffer.splice(i, 1);
                     }
                     else {
                         sendBuffer[i].attempts += 1;
@@ -343,12 +347,13 @@ module.exports = function(RED)
 
                             //If this is a answerBack it does not expect a reply therefor do not add it
                             if(sendBuffer[i].answerbackOpCode == 0x0000) {
-                              sendBuffer.pop(sendBuffer[i]);
+                                sendBuffer.splice(i, 1);
                             }
+                            return;
                         }
                         else {
                             sendBuffer[i].sender.sendStatus("red", "Failed", "Not connected");
-                            sendBuffer.pop(sendBuffer[i]);
+                            sendBuffer.splice(i, 1);
                         }
                     }
                 }
@@ -432,7 +437,7 @@ module.exports = function(RED)
                                 //Success!
                                 sentTo = sendBuffer[i].sender;
                                 sendBuffer[i].answerbackHandler(true, packet);
-                                sendBuffer.pop(sendBuffer[i]);
+                                sendBuffer.splice(i, 1);
                             }
                         }
                     }
@@ -443,7 +448,7 @@ module.exports = function(RED)
                     hdlMessageCallback[i](packet, sentTo);
                 }
 
-                receiveBuffer.pop(receiveBuffer[i]);
+                receiveBuffer.splice(i, 1);
             }
         }
 

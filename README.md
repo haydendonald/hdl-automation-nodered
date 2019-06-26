@@ -31,3 +31,6 @@ You require some way of communicating with the bus though network. This can be d
 ## Coming soon
 Once this is at a stable state i'll be aiming to add the following to the project:
 - Dedicated function node(s) for the most used funtions
+
+## Known bugs
+- The "only reply to answerback" is not node specific, putting two in series causes a loopback
