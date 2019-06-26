@@ -33,4 +33,3 @@ Once this is at a stable state i'll be aiming to add the following to the projec
 - Dedicated function node(s) for the most used funtions
 
 ## Known bugs
-- The "only reply to answerback" is not node specific, putting two in series causes a loopback
