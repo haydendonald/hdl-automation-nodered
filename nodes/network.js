@@ -398,6 +398,8 @@ module.exports = function(RED)
                 var deviceType = message.readUInt16BE(19);
                 var subnetId = message[17];
                 var deviceId = message[18];
+				
+				//Grab the contents
                 var contents = new Buffer.alloc(message[16] - 11);
                 for(var j = 0; j < message[16] - 11; j++) {
                     contents.writeUInt8(message[j + 25], j);
