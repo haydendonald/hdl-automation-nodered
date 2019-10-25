@@ -19,6 +19,14 @@
         <label for="node-config-input-localDeviceId"><i class="icon-bookmark"></i> Local ID</label>
         <input type="text" id="node-config-input-localDeviceId" value="99">
     </div>
+    <div class="form-row">
+        <label for="node-config-input-debug"><i class="icon-tag"></i> Debug:</label>
+        <select id="node-config-input-debug">
+            <option value="none">No</option>
+            <option value="basic">Basic</option>
+            <option value="verbose">Verbose</option>
+        </select>
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -30,6 +38,7 @@
             port: {value: 6000, required: true, validate: RED.validators.number()},
             localSubnet: {value: 99, required: true, validate: RED.validators.number()},
             localDeviceId: {value: 99, required: true, validate: RED.validators.number()},
+            debug: {value: "none", required: true}
         },
         label: function() {
             return (this.name || 'HDL Network' );

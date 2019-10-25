@@ -1,0 +1,1 @@
+- 1.2.9: Fixed an issue where backing up the system for example would cause the network to stop responding to incoming commands

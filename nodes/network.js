@@ -4,14 +4,12 @@ The main network node for the bus communication.
 This node needs to be referenced by other nodes in order to communicate correctly.
 
 */
-var debug = false;
-
 var util = require('util');
 var isBuffer = Buffer.isBuffer;
 var udp = require('dgram');
 var crc = require('crc').crc16xmodem;
 var ping = require("ping");
-
+var debug = "none";
 var functions = require("../HDL/functions/functionList.js");
 
 module.exports = function(RED)
@@ -19,18 +17,6 @@ module.exports = function(RED)
     //Main node definition
     function HDLNetwork(config)
     {
-        //Debug startup
-        if(debug) {
-            console.log("-------------- Functions --------------");
-            console.log("");
-            for(var key in functions.list) {
-                console.log(functions.list[key].name + "[" + key + "]" + " - " + functions.list[key].description + " (" + functions.list[key].status + ")");
-             }
-            console.log("");
-            console.log("---------------------------------------")
-            console.log("");
-        }
-
         RED.nodes.createNode(this, config);
         var node = this;
         var name = config.name;
@@ -39,6 +25,7 @@ module.exports = function(RED)
         var localIpAddress = "0.0.0.0";
         var ipAddress = config.ipAddress;
         var port = config.port;
+        debug = config.debug;
         var connected = false;
         var server = connect(ipAddress, port);
         node.information = {
@@ -54,6 +41,19 @@ module.exports = function(RED)
         var msgFunctionCallbacks = [];
         var sendBuffer = [];
         var receiveBuffer = [];
+
+        //Debug startup
+        if(debug != "none") {
+            console.log("HDL Automation Debug Mode Active!");
+            console.log("-------------- Functions --------------");
+            console.log("");
+            for(var key in functions.list) {
+                console.log(functions.list[key].name + "[" + key + "]" + " - " + functions.list[key].description + " (" + functions.list[key].status + ")");
+                }
+            console.log("");
+            console.log("---------------------------------------")
+            console.log("");
+        }
 
 		//When the flows are stopped
         this.on("close", function() {
@@ -325,7 +325,10 @@ module.exports = function(RED)
 
         //Process the incoming HDL message
         function processIncoming(message) {
-            console.log(message);
+            if(debug == "verbose") {
+                console.log("Incoming Raw: ");
+                console.log(message);
+            }
             receiveBuffer.push(message);
         }
 
@@ -344,6 +347,10 @@ module.exports = function(RED)
 
                         //Send the packet
                         if(server && connected) {
+                            if(debug == "verbose") {
+                                console.log("Send Raw:");
+                                console.log(sendBuffer[i].packet);
+                            }
                             server.send(sendBuffer[i].packet, port, ipAddress);
 
                             //If this is a answerBack it does not expect a reply therefor do not add it
@@ -459,6 +466,10 @@ module.exports = function(RED)
                     //Pass to to all nodes that are expecting to send out all data
                     for(var j = 0; j < hdlMessageCallback.length; j++) {
                         hdlMessageCallback[j](packet, sentTo);
+                    }
+
+                    if(debug == "verbose") {
+                        console.log(packet);
                     }
                 }
 
