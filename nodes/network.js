@@ -4,7 +4,7 @@ The main network node for the bus communication.
 This node needs to be referenced by other nodes in order to communicate correctly.
 
 */
-var debug = true;
+var debug = false;
 
 var util = require('util');
 var isBuffer = Buffer.isBuffer;
@@ -105,7 +105,7 @@ module.exports = function(RED)
                 //Update the information variable
                 node.information.connected = connected;
             });
-        }, 60000);
+        }, 10000);
 
         var sendInterval = setInterval(function() {processSendBuffer();}, 100);
         var receiveInterval = setInterval(function() {processReceiveBuffer();}, 100);
@@ -118,7 +118,6 @@ module.exports = function(RED)
         }
 
         //Send a message to the HDL bus
-        //answerbackHandler = function(command, receivedSubnetID, receivedDeviceID, contents)
         node.send = function(sender, command, targetSubnetID, targetDeviceID, contents, answerbackHandler) {
             //Validate
             if(!/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(localIpAddress)){
@@ -326,6 +325,7 @@ module.exports = function(RED)
 
         //Process the incoming HDL message
         function processIncoming(message) {
+            console.log(message);
             receiveBuffer.push(message);
         }
 
@@ -364,25 +364,29 @@ module.exports = function(RED)
 
         function processReceiveBuffer() {
             for(var i = 0; i < receiveBuffer.length; i++) {
+                //If we have been in this loop for too long break to allow the other buffers to function
+                if(i > 100){break;}
+
+                var messageIsValid = true;
                 var message = receiveBuffer[i];
                 //HDLMIRACLE (In dec)
-                if(message[4] != 72){ return false; }
-                if(message[5] != 68){ return false; }
-                if(message[6] != 76){ return false; }
-                if(message[7] != 77){ return false; }
-                if(message[8] != 73){ return false; }
-                if(message[9] != 82){ return false; }
-                if(message[10] != 65){ return false; }
-                if(message[11] != 67){ return false; }
-                if(message[12] != 76){ return false; }
-                if(message[13] != 69){ return false; }
+                if(message[4] != 72){ messageIsValid =  false; }
+                if(message[5] != 68){ messageIsValid =  false; }
+                if(message[6] != 76){ messageIsValid =  false; }
+                if(message[7] != 77){ messageIsValid =  false; }
+                if(message[8] != 73){ messageIsValid =  false; }
+                if(message[9] != 82){ messageIsValid =  false; }
+                if(message[10] != 65){ messageIsValid =  false; }
+                if(message[11] != 67){ messageIsValid =  false; }
+                if(message[12] != 76){ messageIsValid =  false; }
+                if(message[13] != 69){ messageIsValid =  false; }
 
                 //Lead Code
-                if(message[14] != 0xAA){ return false; }
-                if(message[15] != 0xAA){ return false; }
+                if(message[14] != 0xAA){ messageIsValid =  false; }
+                if(message[15] != 0xAA){ messageIsValid =  false; }
 
                 //Size of packet
-                if(message[16] < 11 || message[16] > 78){ return; }
+                if(message[16] < 11 || message[16] > 78){ messageIsValid = false; }
 
                 var wasSentToThisDevice = true;
                 //Target Subnet ID (Equal to local, or global 255 value)
@@ -392,68 +396,73 @@ module.exports = function(RED)
 
                 //CRC Code
                 var crcValue = message.readUInt16BE(message.length -2);
-                if(!crc(message.slice(16, -2))){ return false; }
-                //Packet is valid parse the data
-                var command = message.readUInt16BE(21);
-                var deviceType = message.readUInt16BE(19);
-                var subnetId = message[17];
-                var deviceId = message[18];
-				
-				//Grab the contents
-                var contents = new Buffer.alloc(message[16] - 11);
-                for(var j = 0; j < message[16] - 11; j++) {
-                    contents.writeUInt8(message[j + 25], j);
-                }
+                if(!crc(message.slice(16, -2))){ messageIsValid =  false; }
 
-                var func = functions.findCommand(command);
-                var packet = {
-                    "payload": {
-                        "opCode": command,
-                        "sender": {
-                            "deviceType": "unknown",
-                            "subnetId": subnetId,
-                            "deviceId": deviceId,
-                            "wasSentToThisDevice": wasSentToThisDevice
-                        },
-                        "operate": null,
-                        "mode": null,
-                        "direction": null,
-                        "data": null,
-                        "contents": contents
+                if(messageIsValid == true) {
+
+                    //Packet is valid parse the data
+                    var command = message.readUInt16BE(21);
+                    var deviceType = message.readUInt16BE(19);
+                    var subnetId = message[17];
+                    var deviceId = message[18];
+                    
+                    //Grab the contents
+                    var contents = new Buffer.alloc(message[16] - 11);
+                    for(var j = 0; j < message[16] - 11; j++) {
+                        contents.writeUInt8(message[j + 25], j);
                     }
-                }
 
-                //If we have found a function for the opCode
-                if(func !== null) {
-                    packet.payload.operate = func.operate;
-                    packet.payload.mode = func.mode;
-                    packet.payload.direction = func.direction;
-                    packet.payload.data = func.actions[func.mode].processData(contents)
-                }
+                    var func = functions.findCommand(command);
+                    var packet = {
+                        "payload": {
+                            "opCode": command,
+                            "sender": {
+                                "deviceType": "unknown",
+                                "subnetId": subnetId,
+                                "deviceId": deviceId,
+                                "wasSentToThisDevice": wasSentToThisDevice
+                            },
+                            "operate": null,
+                            "mode": null,
+                            "direction": null,
+                            "data": null,
+                            "contents": contents
+                        }
+                    }
 
-                //Check if the command exists in the sent items
-                var sentTo = null;
-                for(var j = 0; j < sendBuffer.length; j++) {;
-                    if(sendBuffer[j].targetedSubnetId == subnetId) {
-                        if(sendBuffer[j].targetedDeviceId == deviceId) {
-                            if(sendBuffer[j].answerbackOpCode == command || sendBuffer[j].answerbackOpCode == 0x0000) {
-                                //Check if the id of the data is the same
-                                if(sendBuffer[j].contentsPacket[0] == contents[0]) {
-                                    //Success!
-                                    sentTo = sendBuffer[j].sender;
-                                    sendBuffer[j].answerbackHandler(true, packet);
-                                    sendBuffer.splice(j, 1);
+                    //If we have found a function for the opCode
+                    if(func !== null) {
+                        packet.payload.operate = func.operate;
+                        packet.payload.mode = func.mode;
+                        packet.payload.direction = func.direction;
+                        packet.payload.data = func.actions[func.mode].processData(contents)
+                    }
+
+                    //Check if the command exists in the sent items
+                    var sentTo = null;
+                    for(var j = 0; j < sendBuffer.length; j++) {;
+                        if(sendBuffer[j].targetedSubnetId == subnetId) {
+                            if(sendBuffer[j].targetedDeviceId == deviceId) {
+                                if(sendBuffer[j].answerbackOpCode == command || sendBuffer[j].answerbackOpCode == 0x0000) {
+                                    //Check if the id of the data is the same
+                                    if(sendBuffer[j].contentsPacket[0] == contents[0]) {
+                                        //Success!
+                                        sentTo = sendBuffer[j].sender;
+                                        sendBuffer[j].answerbackHandler(true, packet);
+                                        sendBuffer.splice(j, 1);
+                                    }
                                 }
                             }
                         }
                     }
+
+                    //Pass to to all nodes that are expecting to send out all data
+                    for(var j = 0; j < hdlMessageCallback.length; j++) {
+                        hdlMessageCallback[j](packet, sentTo);
+                    }
                 }
 
-                //Pass to to all nodes that are expecting to send out all data
-                for(var j = 0; j < hdlMessageCallback.length; j++) {
-                    hdlMessageCallback[j](packet, sentTo);
-                }
-
+                //Remove the message
                 receiveBuffer.splice(i, 1);
             }
         }
