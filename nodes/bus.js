@@ -135,11 +135,11 @@ module.exports = function(RED)
 
         //When a request is received on the input
         this.on("input", function(msg) {
-            var sendMsg = network.sendMsg(node, msg);
+            // var sendMsg = network.sendMsg(node, msg);
   
             //Send it!
             node.status({fill:"orange",shape:"dot",text:"Sending..."});
-            network.send(node, sendMsg, function(success, packet) {
+            network.send(node, msg, function(success, packet) {
                 if(success) {
                     node.status({fill:"green",shape:"dot",text:"Sent!"});
                     node.sendMessage(packet);

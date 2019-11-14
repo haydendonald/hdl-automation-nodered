@@ -118,7 +118,12 @@ module.exports = function(RED)
         }
 
         //Send a message to the HDL bus
-        node.send = function(sender, msg, answerbackHandler) {          
+        node.send = function(sender, msg, answerbackHandler) { 
+            //Validate the msg    
+            var sendMsg = network.sendMsg(sender, msg);
+            if(sendMsg == false){answerbackHandler(false); return false;}
+            
+
             var command = msg.command;
             var targetSubnetID = msg.targetSubnetID;
             var targetDeviceID = msg.targetDeviceID;
