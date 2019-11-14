@@ -9,6 +9,7 @@ module.exports = function(RED)
         var deviceId = config.deviceId;
         var network = RED.nodes.getNode(config.network);
         var outputMode = config.outputMode;
+        var inputMessage = undefined;
         var node = this;
         var information = {
             "name": name,
@@ -142,6 +143,8 @@ module.exports = function(RED)
 
         //When a request is received on the input
         this.on("input", function(msg) {
+          inputMessage = msg;
+
           //Check that there is no subnet/device id on the input.
           if(!(msg.payload.subnetId == null && msg.payload.subnetId == undefined)){
             node.status({fill:"yellow",shape:"dot",text:"Not Sent"});
@@ -179,6 +182,7 @@ module.exports = function(RED)
         //Add the node information to the msg object
         node.sendMessage = function(msg) {
             msg.node = information;
+            msg.inputMessage = inputMessage;
             node.send(msg);
         }
     }
