@@ -124,10 +124,10 @@ module.exports = function(RED)
             if(sendMsg == false){answerbackHandler(false); return false;}
             
 
-            var command = msg.command;
-            var targetSubnetID = msg.targetSubnetID;
-            var targetDeviceID = msg.targetDeviceID;
-            var contents = msg.contents;
+            var command = sendMsg.command;
+            var targetSubnetID = sendMsg.targetSubnetID;
+            var targetDeviceID = sendMsg.targetDeviceID;
+            var contents = sendMsg.contents;
 
             //Validate
             if(!/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(localIpAddress)){
