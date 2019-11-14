@@ -462,7 +462,7 @@ module.exports = function(RED)
                                     if(sendBuffer[j].contentsPacket[0] == contents[0]) {
                                         //Success!
                                         sentTo = sendBuffer[j].sender;
-                                        packet.inputMessage = "yeet";
+                                        packet.inputMessage = sendBuffer[j].inputMessage;
                                         sendBuffer[j].answerbackHandler(true, packet);
                                         sendBuffer.splice(j, 1);
                                     }
