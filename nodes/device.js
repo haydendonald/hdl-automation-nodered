@@ -143,7 +143,7 @@ module.exports = function(RED)
 
         //When a request is received on the input
         this.on("input", function(msg) {
-          node.inputMessage = msg;
+          information.inputMessage = msg;
 
           //Check that there is no subnet/device id on the input.
           if(!(msg.payload.subnetId == null && msg.payload.subnetId == undefined)){
