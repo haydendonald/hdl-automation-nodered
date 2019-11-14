@@ -5,4 +5,5 @@
 - 1.2.1: Fixed a major bug that would cause a loop to occur when putting a node in series
 - 1.2.2: Fixed a bug where the recieved buffer was not being cleared correctly
 - 1.3.0: Fixed an issue where backing up the system for example would cause the network to stop responding to incoming commands. Also added debug setting to check for incoming commands
-- 1.3.1 - ???: Do not use adding feature that returns the sent msg to the output via the msg.inputMessage value  
+- 1.3.1 - 1.4.9: Do not use adding feature that returns the sent msg to the output via the msg.inputMessage value  
+- 1.5.0: Added feature that allows the sent message to be accessed on answerBack using the msg.inputMessage value
