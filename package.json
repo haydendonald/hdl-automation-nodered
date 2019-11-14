@@ -1,6 +1,6 @@
 {
   "name": "hdl-automation-nodered",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Provides control and feedback of the HDL Automation bus for Node Red https://www.hdlautomation.com/",
   "main": "",
   "repository": {

@@ -118,7 +118,12 @@ module.exports = function(RED)
         }
 
         //Send a message to the HDL bus
-        node.send = function(sender, command, targetSubnetID, targetDeviceID, contents, answerbackHandler) {
+        node.send = function(sender, msg, answerbackHandler) {          
+            var command = msg.command;
+            var targetSubnetID = msg.targetSubnetID;
+            var targetDeviceID = msg.targetDeviceID;
+            var contents = msg.contents;
+
             //Validate
             if(!/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(localIpAddress)){
                 node.error("Invalid Local IP Address: " + localIpAddress);
@@ -213,6 +218,7 @@ module.exports = function(RED)
             //Push to the send buffer to be processed
             sendBuffer.push({
                 "sender": sender,
+                "inputMessage": msg,
                 "answerbackHandler": answerbackHandler,
                 "packet": finalPacket,
                 "contentsPacket": contents,
@@ -455,7 +461,7 @@ module.exports = function(RED)
                                     if(sendBuffer[j].contentsPacket[0] == contents[0]) {
                                         //Success!
                                         sentTo = sendBuffer[j].sender;
-                                        sendBuffer[j].answerbackHandler(true, packet);
+                                        sendBuffer[j].answerbackHandler(true, packet, sendBuffer[j].inputMessage);
                                         sendBuffer.splice(j, 1);
                                     }
                                 }

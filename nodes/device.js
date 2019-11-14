@@ -15,8 +15,7 @@ module.exports = function(RED)
             "type": node.type,
             "subnetId": subnetId,
             "deviceId": deviceId,
-            "outputMode": outputMode,
-            "inputMessage": undefined
+            "outputMode": outputMode
         }
 
         //Check all relevent variables are present
@@ -167,10 +166,10 @@ module.exports = function(RED)
 
           //Send it!
           node.status({fill:"orange",shape:"dot",text:"Sending..."});
-          network.send(node, sendMsg.command, sendMsg.targetSubnetID, sendMsg.targetDeviceID, sendMsg.contents, function(success, packet) {
+          network.send(node, sendMsg, function(success, packet, inputMsg) {
               if(success) {
                   node.status({fill:"green",shape:"dot",text:"Sent!"});
-                  node.sendMessage(packet);
+                  node.sendMessage(packet, inputMsg);
               }
               else {
                   node.status({fill:"red",shape:"dot",text:"Failed"});
@@ -180,8 +179,9 @@ module.exports = function(RED)
         });
 
         //Add the node information to the msg object
-        node.sendMessage = function(msg) {
+        node.sendMessage = function(msg, inputMessage) {
             msg.node = information;
+            msg.inputMessage = inputMessage;
             node.send(msg);
         }
     }
