@@ -166,10 +166,10 @@ module.exports = function(RED)
 
           //Send it!
           node.status({fill:"orange",shape:"dot",text:"Sending..."});
-          network.send(node, sendMsg, function(success, packet, inputMsg) {
+          network.send(node, sendMsg, function(success, packet) {
               if(success) {
                   node.status({fill:"green",shape:"dot",text:"Sent!"});
-                  node.sendMessage(packet, inputMsg);
+                  node.sendMessage(packet);
               }
               else {
                   node.status({fill:"red",shape:"dot",text:"Failed"});
@@ -179,9 +179,8 @@ module.exports = function(RED)
         });
 
         //Add the node information to the msg object
-        node.sendMessage = function(msg, inputMessage) {
+        node.sendMessage = function(msg) {
             msg.node = information;
-            msg.inputMessage = inputMessage;
             node.send(msg);
         }
     }

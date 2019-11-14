@@ -430,7 +430,7 @@ module.exports = function(RED)
                         "payload": {
                             "opCode": command,
                             "sender": {
-                                "deviceType": "unknown",
+                                "deviceType": deviceType,
                                 "subnetId": subnetId,
                                 "deviceId": deviceId,
                                 "wasSentToThisDevice": wasSentToThisDevice
@@ -439,7 +439,8 @@ module.exports = function(RED)
                             "mode": null,
                             "direction": null,
                             "data": null,
-                            "contents": contents
+                            "contents": contents,
+                            "inputMessage": undefined
                         }
                     }
 
@@ -461,7 +462,8 @@ module.exports = function(RED)
                                     if(sendBuffer[j].contentsPacket[0] == contents[0]) {
                                         //Success!
                                         sentTo = sendBuffer[j].sender;
-                                        sendBuffer[j].answerbackHandler(true, packet, sendBuffer[j].inputMessage);
+                                        packet.inputMessage = "yeet";
+                                        sendBuffer[j].answerbackHandler(true, packet);
                                         sendBuffer.splice(j, 1);
                                     }
                                 }
