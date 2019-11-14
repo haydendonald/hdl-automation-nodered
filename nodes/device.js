@@ -182,7 +182,6 @@ module.exports = function(RED)
         //Add the node information to the msg object
         node.sendMessage = function(msg) {
             msg.node = information;
-            msg.node.inputMessage = inputMessage;
             node.send(msg);
         }
     }

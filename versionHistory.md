@@ -7,3 +7,4 @@
 - 1.3.0: Fixed an issue where backing up the system for example would cause the network to stop responding to incoming commands. Also added debug setting to check for incoming commands
 - 1.3.1: Added msg.inputMessage. This passes the msg that was sent to the device
 - 1.3.2: Moved msg.inputMessage to msg.information.inputMessage as it was being cleared
+- 1.3.3: Bug fix
