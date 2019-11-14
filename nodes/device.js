@@ -159,12 +159,12 @@ module.exports = function(RED)
           msg.payload.subnetId = parseInt(subnetId);
           msg.payload.deviceId = parseInt(deviceId);
 
-          var sendMsg = network.sendMsg(node, msg)
-          if(sendMsg == false) {return;}
+        //   var sendMsg = network.sendMsg(node, msg)
+        //   if(sendMsg == false) {return;}
 
           //Send it!
           node.status({fill:"orange",shape:"dot",text:"Sending..."});
-          network.send(node, sendMsg, function(success, packet) {
+          network.send(node, msg, function(success, packet) {
               if(success) {
                   node.status({fill:"green",shape:"dot",text:"Sent!"});
                   node.sendMessage(packet);
