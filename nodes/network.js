@@ -362,7 +362,11 @@ module.exports = function(RED)
                                 console.log("Send Raw:");
                                 console.log(sendBuffer[i].packet);
                             }
-                            server.send(sendBuffer[i].packet, port, ipAddress);
+                            try{server.send(sendBuffer[i].packet, port, ipAddress);}
+                            catch(e){
+                                RED.error("Could not send message because of a socket error: " + e);
+                                sendBuffer[i].sender.sendStatus("red", "Failed", "Socket Error");
+                            }
 
                             //If this is a answerBack it does not expect a reply therefor do not add it
                             if(sendBuffer[i].answerbackOpCode == 0x0000) {
