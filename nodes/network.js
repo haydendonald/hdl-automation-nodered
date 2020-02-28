@@ -391,6 +391,13 @@ module.exports = function(RED)
 
                 var messageIsValid = true;
                 var message = receiveBuffer[i];
+
+                //IP Address
+                if(parseInt(message[0]) != parseInt(ipAddress.split(".")[0])){ messageIsValid = false; }
+                if(parseInt(message[1]) != parseInt(ipAddress.split(".")[1])){ messageIsValid = false; }
+                if(parseInt(message[2]) != parseInt(ipAddress.split(".")[2])){ messageIsValid = false; }
+                if(parseInt(message[3]) != parseInt(ipAddress.split(".")[3])){ messageIsValid = false; }
+
                 //HDLMIRACLE (In dec)
                 if(message[4] != 72){ messageIsValid =  false; }
                 if(message[5] != 68){ messageIsValid =  false; }

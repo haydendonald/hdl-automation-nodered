@@ -7,3 +7,4 @@
 - 1.3.0: Fixed an issue where backing up the system for example would cause the network to stop responding to incoming commands. Also added debug setting to check for incoming commands
 - 1.3.1 - 1.4.9: Do not use adding feature that returns the sent msg to the output via the msg.inputMessage value  
 - 1.5.0: Added feature that allows the sent message to be accessed on answerBack using the msg.inputMessage value
+- 1.5.1: Bug fix. When two gateways have access multiple messages would be recieved.
