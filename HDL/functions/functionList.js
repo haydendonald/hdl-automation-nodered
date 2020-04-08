@@ -5,7 +5,8 @@ module.exports = {
         dateTime: require("./dateTime.js"),
         sequenceControl: require("./sequenceControl.js"),
         panelControl: require("./panelControl.js"),
-        ACControl: require("./ACControl.js")
+        ACControl: require("./ACControl.js"),
+        dryContact: require("./dryContact.js")
     },
 
     //Find the opCode of a function
