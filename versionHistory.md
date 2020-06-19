@@ -9,3 +9,4 @@
 - 1.5.0: Added feature that allows the sent message to be accessed on answerBack using the msg.inputMessage value
 - 1.5.1: Bug fix. When two gateways have access multiple messages would be recieved.
 - 1.6.0: Added dryContact
+- 1.6.1: Bug fix. Added singleChannelControl to the function list
