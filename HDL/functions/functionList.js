@@ -6,6 +6,7 @@ module.exports = {
         sequenceControl: require("./sequenceControl.js"),
         panelControl: require("./panelControl.js"),
         ACControl: require("./ACControl.js"),
+        singleChannelControl: require("./singleChannelControl.js"),
         dryContact: require("./dryContact.js")
     },
 
