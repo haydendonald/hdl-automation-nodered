@@ -143,24 +143,16 @@ module.exports = function(RED)
         //When a request is received on the input
         this.on("input", function(msg) {
           //Check that there is no subnet/device id on the input.
-          if(!(msg.payload.subnetId == null && msg.payload.subnetId == undefined)){
-            node.status({fill:"yellow",shape:"dot",text:"Not Sent"});
-            node.error("The subnetId should be null. I'm not sure where to send this message to. It has been ignored");
-            return;
+          if((msg.payload.subnetId == null && msg.payload.subnetId == undefined)){
+            msg.payload.subnetId = parseInt(subnetId);
           }
 
-          if(!(msg.payload.deviceId == null && msg.payload.deviceId == undefined)){
-            node.status({fill:"yellow",shape:"dot",text:"Not Sent"});
-            node.error("The deviceId should be null. I'm not sure where to send this message to. It has been ignored");
-            return;
+          if((msg.payload.deviceId == null && msg.payload.deviceId == undefined)){
+            msg.payload.deviceId = parseInt(deviceId);
           }
 
-          //Now set the subnet/device id according to this deviceId
-          msg.payload.subnetId = parseInt(subnetId);
-          msg.payload.deviceId = parseInt(deviceId);
-
-        //   var sendMsg = network.sendMsg(node, msg)
-        //   if(sendMsg == false) {return;}
+          console.log(msg.payload.subnetId);
+          console.log(msg.payload.deviceId);
 
           //Send it!
           node.status({fill:"orange",shape:"dot",text:"Sending..."});

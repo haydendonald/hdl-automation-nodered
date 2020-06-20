@@ -1,3 +1,43 @@
+# General Functionality
+### Sending to the bus
+In order to send commands to the HDL bus it is expected that messages will be sent as following
+```
+var msg = {
+    "payload": {
+        "operate": "function",
+        "subnetId": 0, //Override the subnet id if required
+        "deviceId": 1, //Override the device id if required
+        "mode": "set/get", //Set will set the value to the bus, get will get the value from the bus
+        "direction": "request/answerBack", //Request is requesting the action to happen, answerBack is a reply from the bus
+        "data": {
+            //The data specific to the function
+        }
+    }
+}
+```
+### Receiving from the bus
+When events occur on the bus commands will be outputted in the following format:
+```
+{
+    "payload": {
+        "opCode": 0x002,
+        "sender": {
+            "deviceType": 0x00B,
+            "subnetId": 1,
+            "deviceId": 2,
+            "wasSendToThisDevice": true/false
+        }
+        "operate": "function",
+        "mode": "set/get",
+        "direction": "request/answerBack",
+        "data": {
+            //The data specific to the function
+        },
+        "contents": Buffer([0x01, 0x01]) //The raw contents sent
+    }
+}
+```
+
 # Supported Functions
 # Scene Control
 Scene control selects a scene within a area
