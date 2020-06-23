@@ -151,9 +151,6 @@ module.exports = function(RED)
             msg.payload.deviceId = parseInt(deviceId);
           }
 
-          console.log(msg.payload.subnetId);
-          console.log(msg.payload.deviceId);
-
           //Send it!
           node.status({fill:"orange",shape:"dot",text:"Sending..."});
           network.send(node, msg, function(success, packet) {

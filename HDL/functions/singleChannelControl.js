@@ -53,6 +53,7 @@ module.exports = {
             request: 0x0033,
             answerBack: 0x0034,
             processData: function(data) {
+              console.log(data);
               var ret = {
                 "totalChannelNumber": data[0],
                 "channels": undefined
@@ -66,8 +67,8 @@ module.exports = {
               return ret;
             },
             generateData: function(data) {
-              //There is no parameters
-              return Buffer.from([]);
+              if (typeof data.channelNumber != 'number'){ return "Invalid channel number: " + data.channelNumber; }
+              return Buffer.from([data.channelNumber, 0x00, 0x00, 0x00, data.channelNumber]);
             }
         },
 
@@ -89,7 +90,7 @@ module.exports = {
               return ret;
             },
             generateData: function(data) {
-              //There is no parameters
+              //There is no parameters - may not work as the request was different to the docs and i think this will be too
               return Buffer.from([]);
             }
         }
