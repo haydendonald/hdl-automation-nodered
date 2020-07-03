@@ -56,7 +56,7 @@ module.exports = {
               console.log(data);
               var ret = {
                 "totalChannelNumber": data[0],
-                "channels": undefined
+                "channels": []
               }
 
               //Get the channel values
