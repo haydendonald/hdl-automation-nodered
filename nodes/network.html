@@ -27,6 +27,13 @@
             <option value="verbose">Verbose</option>
         </select>
     </div>
+    <div class="form-row">
+        <label for="node-config-input-blockDuplicate"><i class="icon-tag"></i> Block Duplicate Messages:</label>
+        <select id="node-config-input-blockDuplicate">
+            <option value="off">Off</option>
+            <option value="on">On</option>
+        </select>
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -38,7 +45,8 @@
             port: {value: 6000, required: true, validate: RED.validators.number()},
             localSubnet: {value: 99, required: true, validate: RED.validators.number()},
             localDeviceId: {value: 99, required: true, validate: RED.validators.number()},
-            debug: {value: "none", required: true}
+            debug: {value: "none", required: true},
+            blockDuplicate: {value: "off", required: true}
         },
         label: function() {
             return (this.name || 'HDL Network' );

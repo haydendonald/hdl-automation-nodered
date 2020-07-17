@@ -11,3 +11,4 @@
 - 1.6.0: Added dryContact
 - 1.6.1: Bug fix. Added singleChannelControl to the function list
 - 1.6.2: Add the abbility to override the subnet/device id for a device node
+- 1.7.0: Added blocking of duplicate messages

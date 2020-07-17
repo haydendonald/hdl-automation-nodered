@@ -26,6 +26,7 @@ module.exports = function(RED)
         var ipAddress = config.ipAddress;
         var port = config.port;
         debug = config.debug;
+        var blockDuplicate = config.blockDuplicate == "on";
         var connected = false;
         var server = connect(ipAddress, port);
         node.information = {
@@ -334,15 +335,6 @@ module.exports = function(RED)
             return ret;
         }
 
-        //Process the incoming HDL message
-        function processIncoming(message) {
-            if(debug == "verbose") {
-                console.log("Incoming Raw: ");
-                console.log(message);
-            }
-            receiveBuffer.push(message);
-        }
-
         //Send out all commands in the send buffer
         function processSendBuffer() {
             for(var i = 0; i < sendBuffer.length; i++) {
@@ -391,6 +383,13 @@ module.exports = function(RED)
 
                 var messageIsValid = true;
                 var message = receiveBuffer[i];
+
+                //Check if there is a duplicate in the buffer and the block duplicate feature if enabled
+                if(blockDuplicate === true) {
+                    for(var k = 1; k < receiveBuffer.length; k++) {
+                        if(JSON.stringify(message) == JSON.stringify(receiveBuffer[k])) {messageIsValid = false;}
+                    }
+                }
 
                 //IP Address
                 if(parseInt(message[0]) != parseInt(ipAddress.split(".")[0])){ messageIsValid = false; }
@@ -487,13 +486,12 @@ module.exports = function(RED)
                         }
                     }
 
-                    //Pass to to all nodes that are expecting to send out all data
-                    for(var j = 0; j < hdlMessageCallback.length; j++) {
-                        hdlMessageCallback[j](packet, sentTo);
-                    }
-
                     if(debug == "verbose") {
                         console.log(packet);
+                    }
+
+                    for(var j = 0; j < hdlMessageCallback.length; j++) {
+                        hdlMessageCallback[j](packet, sentTo);
                     }
                 }
 
@@ -514,7 +512,13 @@ module.exports = function(RED)
                 node.sendStatus("red", "Internal Error", err);
             });
 
-            server.on('message', function(message) {processIncoming(message);});
+            server.on('message', function(message, rinfo) {
+                if(debug == "verbose") {
+                    console.log("Incoming Raw From " + rinfo.address);
+                    console.log(message);
+                }
+                receiveBuffer.push(message);
+            });
 
             server.bind(port);
             return server;
