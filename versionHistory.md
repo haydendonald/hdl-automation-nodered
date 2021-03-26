@@ -13,4 +13,6 @@
 - 1.6.1: Bug fix. Added singleChannelControl to the function list
 - 1.6.2: Add the ability to override the subnet/device id for a device node
 - 1.7.0: Added blocking of duplicate messages
-- 1.8.0: Updated panel control for better processing of the data
+- 1.8.0: 
+    - Updated panel control for better processing of the data
+    - Added read temperature

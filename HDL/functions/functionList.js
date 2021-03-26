@@ -7,7 +7,9 @@ module.exports = {
         panelControl: require("./panelControl.js"),
         ACControl: require("./ACControl.js"),
         singleChannelControl: require("./singleChannelControl.js"),
-        dryContact: require("./dryContact.js")
+        dryContact: require("./dryContact.js"),
+        readTemperatureOld: require("./readTemperatureOld.js"),
+        readTemperature: require("./readTemperature.js")
     },
 
     //Find the opCode of a function
