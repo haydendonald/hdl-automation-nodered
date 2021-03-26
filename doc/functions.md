@@ -69,67 +69,67 @@ Sequence control selects a sequence within a area
   - **mode** = "set/get" (Set sets the value, get gets the value)
   - **direction** = "request/answerBack" (Request asks for the current value, answerBack is the reply for the request)
   - **data**
-    - **panelFunction** The panel function to be processed
+    - **function** The panel function to be processed
       - "ircontrol"
-        - **panelData** = "on/off"
+        - **value** = "on/off"
       - "lockpanel"
-        - **panelData** = "on/off"
+        - **value** = "on/off"
       - "acpower"
-        - **panelData** = "on/off"
+        - **value** = "on/off"
       - "coolingtemp"
-        - **panelData** = 0-84
+        - **value** = 0-84
       - "fanspeed"
-        - **panelData** = "auto/high/medium/low"
+        - **value** = "auto/high/medium/low"
       - "acmode"
-        - **panelData** = "cooling/heating/fan/auto/dehumidfyify"
+        - **value** = "cooling/heating/fan/auto/dehumidify"
       - "heattemp"
-        - **panelData** = 0-84
+        - **value** = 0-84
       - "autotemp"
-        - **panelData** = 0-84
+        - **value** = 0-84
       - "risetemp"
-        - **panelData** = 0-5
+        - **value** = 0-5
       - "decreasetemp"
-        - **panelData** = 0-5
+        - **value** = 0-5
       - "backlightstatus"
-        - **panelData** = "on/off"
+        - **value** = "on/off"
       - "lockac"
-        - **panelData** = "on/off"
+        - **value** = "on/off"
       - "backlightlevel"
-        - **panelData** = 0-100
+        - **value** = 0-100
       - "statuslightlevel"
-        - **panelData** = 0-100
+        - **value** = 0-100
       - "sheildbutton"
-        - **button** = 1-255
-        - **status** = "on/off"
+        - **selector** (button) = 1-255
+        - **value** = "on/off"
       - "shieldpage"
-        - **page** = 1-255
-        - **status** = "on/off"
+        - **selector** (page) = 1-255
+        - **value** = "on/off"
       - "controlbuttonled"
-        - **button** = 1-255
-        - **status** = "on/off"
+        - **selector** (button) = 1-255
+        - **value** = "on/off"
       - "controlbutton"
-        - **button** = 1-255
-        - **status** = "on/off"
+        - **selector** (button) = 1-255
+        - **value** = "on/off"
       - "drytemp"
-        - **panelData** = 0-84
+        - **value** = 0-84
       - "tempstatus"
-        - **panelData** = "on/off"
+        - **value** = "on/off"
       - "tempmode"
-        - **panelData** = "normal/day/night/away/timer"
+        - **value** = "normal/day/night/away/timer"
       - "fhrisetemp"
-        - **panelData** = 0-5
+        - **value** = 0-5
       - "fhdecreasetemp"
-        - **panelData** = 0-5
+        - **value** = 0-5
       - "locksetuppage"
-        - **panelData** = "on/off"
+        - **value** = "on/off"
       - "normaltemp"
-        - **panelData** = 0-84
+        - **value** = 0-84
       - "daytemp"
-        - **panelData** = 0-84
+        - **value** = 0-84
       - "nighttemp"
-        - **panelData** = 0-84
+        - **value** = 0-84
       - "awaytemp"
-        - **panelData** = 0-84
+        - **value** = 0-84
 
 # AC Control
 AC control controls a air conditioner
