@@ -133,27 +133,70 @@ Sequence control selects a sequence within a area
 
 # AC Control
 AC control controls a air conditioner
-- **operate** = "ACControl"
-- **mode** = "set/get" (Set sets the value, get gets the value)
-- **direction** = "request/answerBack" (Request asks for the current value, answerBack is the reply for the request)
-- **data**
-  - **ACNumber** The AC number to control
-  - **temperatureType** The temperature type. Either C or F
-  - **currentTemperature** The current temperature reported by the AC sensor
-  - **coolingTemperaturePoint** The aimed cooling temperature
-  - **heatingTemperaturePoint** The aimed heating temperature
-  - **autoTemperaturePoint** The aimed auto temperature
-  - **dryTemperaturePoint** The aimed dry temperature
-  - **coolingTemperaturePoint** The aimed cooling temperature
-  - **fan** The fan state = 'auto', 'high', 'medium', 'low'
-  - **mode** The mode state = 'cooling', 'heating', 'fan', 'auto', 'dry'
-  - **ACStatus** The current power of the AC = 'on', 'off'
-  - **SetupMode** The setup mode of the AC = 'cooling', 'heating', 'fan', 'auto', 'dry'
-  - **SetupSpeed** The setup speed of the AC = 'auto', 'high', 'medium', 'low'
-  - **currentFan** The current fan = 'auto', 'high', 'medium', 'low'
-  - **currentMode** The the current mode = 'cooling', 'heating', 'fan', 'auto', 'dry'
-  - **sweepEnable** Whether the sweep is enabled = 'on', 'off'
-  - **sweepNow** If the AC is currently sweeping = 'on', 'off'
+- **operate** = ```ACControl```
+
+### Example ```Get``` Request
+```
+//Example get request
+msg.payload.data = {
+  "number": 1, //The AC number to select (1-128). Defaults to 1
+}
+```
+
+### Example ```Set``` Request
+```
+//Example set request
+//If not specified it will set it to the current value read from the bus
+msg.payload.data = {
+  "number": 1, //The AC number (1-128) **REQUIRED**
+  "temperatureType": "C/F", //The type of temperature (C or F)
+  "currentTemperature": 0, //The current temperature read by the sensor
+  "setTemperature": {
+    "cooling": 0, //The cooling temperature 0-99 degrees
+    "heating": 0, //The cooling temperature 0-99 degrees
+    "auto": 0, //The cooling temperature 0-99 degrees
+    "dry": 0, //The cooling temperature 0-99 degrees
+  },
+  "mode": "",
+  "fan": "",
+  "state": true/false, //The AC power state
+  "setupMode": "",
+  "setupSpeed": "",
+  "currentMode": "",
+  "currentFan": "",
+  "sweep": {
+    "enabled": true/false, //Is the sweep enabled?
+    "state": ""
+  }
+}
+```
+
+### Example ```Response```
+```
+//Example response
+msg.payload.data = {
+  "number": 1, //The AC number (1-128)
+  "temperatureType": "C/F", //The type of temperature (C or F)
+  "currentTemperature": 0, //The current temperature read by the sensor
+  "setTemperature": {
+    "cooling": 0, //The cooling temperature 0-99 degrees
+    "heating": 0, //The cooling temperature 0-99 degrees
+    "auto": 0, //The cooling temperature 0-99 degrees
+    "dry": 0, //The cooling temperature 0-99 degrees
+  },
+  "mode": "",
+  "fan": "",
+  "state": true/false, //The AC power state
+  "setupMode": "",
+  "setupSpeed": "",
+  "currentMode": "",
+  "currentFan": "",
+  "sweep": {
+    "enabled": true/false, //Is the sweep enabled?
+    "state": ""
+  }
+}
+```
 
 # Date Time
 The current date and time in the HDL system

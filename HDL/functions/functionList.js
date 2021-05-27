@@ -4,7 +4,7 @@ module.exports = {
         UVSwitch: require("./UVSwitch.js"),
         dateTime: require("./dateTime.js"),
         sequenceControl: require("./sequenceControl.js"),
-        panelControl: require("./panelControl.js"),
+        //panelControl: require("./panelControl.js"),
         ACControl: require("./ACControl.js"),
         singleChannelControl: require("./singleChannelControl.js"),
         dryContact: require("./dryContact.js"),
@@ -75,12 +75,12 @@ module.exports = {
          }
     },
 
-    generateContentsFromData: function(command, data) {
+    generateContentsFromData: function(command, data, originalMsg, requester) {
         for(var key in this.list) {
             for(var key2 in this.list[key].actions) {
                 for(var key3 in this.list[key].actions[key2]) {
                     if(this.list[key].actions[key2][key3] == command) {
-                        return this.list[key].actions[key2].generateData(data);
+                        return this.list[key].actions[key2].generateData(data, originalMsg, requester);
                     }
                 }
             }

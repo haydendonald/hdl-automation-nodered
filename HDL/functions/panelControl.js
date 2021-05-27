@@ -3,7 +3,7 @@ module.exports = {
     name: "Panel Control",
     description: "Panel control controls a wall panel",
 
-    functions: {
+    commands: {
       //IR Control
       1: {
         "name": "ircontrol",
@@ -232,7 +232,11 @@ module.exports = {
         set: {
             request: 0xE3D8,
             answerBack: 0xE3D9,
-            processData: function(data) {
+            processData: function(data, func) {
+
+
+              console.log(func);
+
               if(data.length == 2) {
                 return {
                   "function": functions[data[0]].name || data[0],
@@ -247,7 +251,7 @@ module.exports = {
                 }      
               }
             },
-            generateData: function(data) {
+            generateData: function(data, func) {
               var func = undefined;
               var values = [];
               
@@ -287,7 +291,7 @@ module.exports = {
         get: {
             request: 0xE3DA,
             answerBack: 0xE3DB,
-            processData: function(data) {
+            processData: function(data, func) {
               if(data.length == 2) {
                 return {
                   "function": functions[data[0]].name || data[0],
@@ -302,7 +306,7 @@ module.exports = {
                 }      
               }
             },
-            generateData: function(data) {
+            generateData: function(data, func) {
               var func = undefined;
               var values = [];
               
@@ -325,10 +329,10 @@ module.exports = {
         broadcast: {
             request: 0xFFFF,
             answerBack: 0xFFFF,
-            processData: function(data) {
+            processData: function(data, func) {
                 return null;
             },
-            generateData: function(data) {
+            generateData: function(data, func) {
                 return null;
             }
         }

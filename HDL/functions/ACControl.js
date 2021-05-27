@@ -8,214 +8,131 @@ module.exports = {
             request: 0x193A,
             answerBack: 0x193B,
             processData: function(data) {
-              var tempType = "unknown";
-              if(data[1] == 0){tempType = "C";}else if(data[1] == 1){tempType = "F";}else{tempType = data[1];}
+              var values = require("./values.js").list.ACValues;
+
+              var getBinVal = function(input, from, to) {
+                var bin = (input >>> 0).toString(2).padStart(8, '0');
+                var splitBin = bin.substring(from, to + 1).padStart(8, '0');
+                return parseInt(splitBin, 2);
+              }
+
+
               var ret = {
-                "ACNumber": data[0],
-                "temperatureType": tempType,
+                "number":  data[0],
+                "temperatureType": values.tempType[data[1]],
                 "currentTemperature": data[2],
-                "coolingTemperaturePoint": data[3],
-                "heatingTemperaturePoint": data[4],
-                "autoTemperaturePoint": data[5],
-                "dryTemperaturePoint": data[6],
-              }
-
-              //Split mode and fan byte into their parts
-              var modeFanBinary = (parseInt(data[7], 16).toString(2)).padStart(8, '0');
-
-              //Get fan
-              var fanHex = parseInt(modeFanBinary.split(0, 4), 2).toString(16).toUpperCase();
-              var fan = null;
-              switch(fanHex) {
-                case 0: {fan = "auto"; break; }
-                case 1: {fan = "high"; break; }
-                case 2: {fan = "medium"; break; }
-                case 3: {fan = "low"; break; }
-                default: {fan = fanHex; break;}
-              }
-              ret["fan"] = fan;
-
-              //Get mode
-              var modeHex = parseInt(modeFanBinary.split(5, 8), 2).toString(16).toUpperCase();
-              var mode = null;
-              switch(modeHex) {
-                case 0: {mode = "cooling"; break; }
-                case 1: {mode = "heating"; break; }
-                case 2: {mode = "fan"; break; }
-                case 3: {mode = "auto"; break; }
-                case 4: {mode = "dry"; break; }
-                default: {mode = modeHex; break;}
-              }
-              ret["mode"] = mode;
-
-              //AC Status
-              switch(data[8]) {
-                case 0: {ret["ACStatus"] = "off"; break;}
-                case 1: {ret["ACStatus"] = "on"; break;}
-                default: {ret["ACStatus"] = data[8]; break;}
-              }
-
-              //Setup mode
-              switch(data[9]) {
-                case 0: {ret["SetupMode"] = "cooling"; break;}
-                case 1: {ret["SetupMode"] = "heating"; break;}
-                case 2: {ret["SetupMode"] = "fan"; break;}
-                case 3: {ret["SetupMode"] = "auto"; break;}
-                case 4: {ret["SetupMode"] = "dry"; break;}
-                default: {ret["SetupMode"] = data[9]; break;}
-              }
-
-              //Setup Speed
-              switch(data[10]) {
-                case 0: {ret["SetupSpeed"] = "auto"; break;}
-                case 1: {ret["SetupSpeed"] = "high"; break;}
-                case 2: {ret["SetupSpeed"] = "medium"; break;}
-                case 3: {ret["SetupSpeed"] = "low"; break;}
-                default: {ret["SetupSpeed"] = data[10]; break;}
-              }
-
-              //Split mode and fan byte into their parts
-              var currentModeFanBinary = (parseInt(data[11], 16).toString(2)).padStart(8, '0');
-
-              //Get fan
-              switch(parseInt(currentModeFanBinary.split(0, 4), 2).toString(16).toUpperCase()) {
-                case 0: {ret["currentFan"] = "auto"; break; }
-                case 1: {ret["currentFan"] = "high"; break; }
-                case 2: {ret["currentFan"] = "medium"; break; }
-                case 3: {ret["currentFan"] = "low"; break; }
-                default: {ret["currentFan"] = parseInt(currentModeFanBinary.split(0, 4), 2).toString(16).toUpperCase(); break;}
-              }
-
-              //Get mode
-              switch(parseInt(currentModeFanBinary.split(5, 8), 2).toString(16).toUpperCase()) {
-                case 0: {ret["currentMode"] = "cooling"; break; }
-                case 1: {ret["currentMode"] = "heating"; break; }
-                case 2: {ret["currentMode"] = "fan"; break; }
-                case 3: {ret["currentMode"] = "auto"; break; }
-                case 4: {ret["currentMode"] = "dry"; break; }
-                default: {ret["currentMode"] = parseInt(currentModeFanBinary.split(5, 8), 2).toString(16).toUpperCase(); break;}
-              }
-
-              //Split sweep byte into their parts
-              var sweepBinary = (parseInt(data[12], 16).toString(2)).padStart(8, '0');
-
-              //Get enable sweep
-              switch(parseInt(sweepBinary.split(0, 4), 2).toString(16).toUpperCase()) {
-                case 0: {ret["sweepEnable"] = "off"; break; }
-                case 1: {ret["sweepEnable"] = "on"; break; }
-                default: {ret["sweepEnable"] = parseInt(sweepBinary.split(0, 4), 2).toString(16).toUpperCase(); break;}
-              }
-
-              //Get sweep
-              switch(parseInt(sweepBinary.split(5, 8), 2).toString(16).toUpperCase()) {
-                case 0: {ret["sweepNow"] = "off"; break; }
-                case 1: {ret["sweepNow"] = "on"; break; }
-                default: {ret["sweepNow"] = parseInt(sweepBinary.split(5, 8), 2).toString(16).toUpperCase(); break;}
-              }
+                "setTemperature": {
+                  "cooling": data[3],
+                  "heating": data[4],
+                  "auto": data[5],
+                  "dry": data[6],
+                },
+                "mode": values.modes[getBinVal(data[7], 0, 3)],
+                "fan": values.fanSpeeds[getBinVal(data[7], 4, 7)],
+                "state": data[8],
+                "setupMode": data[9],
+                "setupSpeed": data[10],
+                "currentMode": values.modes[getBinVal(data[11], 0, 3)],
+                "currentFan": values.fanSpeeds[getBinVal(data[11], 4, 7)],
+                "sweep": {
+                  "enabled": getBinVal(data[12], 0, 3) == 1,
+                  "state": getBinVal(data[12], 4, 7)
+                }
+              };
 
               return ret;
             },
-            generateData: function(data) {
-              if (typeof data.ACNumber != 'number' || data.ACNumber < 1 || data.ACNumber > 128) {
-                return "Invalid AC number: " + data.ACNumber + ". Expects a number between 1 and 128";
-              }
-              if (typeof data.coolingTemperaturePoint != 'number' || data.coolingTemperaturePoint < 0 || data.coolingTemperaturePoint > 86) {
-                return "Invalid cooling temperature point: " + data.coolingTemperaturePoint + ". Expects a number between 0 and 86";
-              }
-              if (typeof data.heatingTemperaturePoint != 'number' || data.heatingTemperaturePoint < 0 || data.heatingTemperaturePoint > 86) {
-                return "Invalid heating temperature point: " + data.heatingTemperaturePoint + ". Expects a number between 0 and 86";
-              }
-              if (typeof data.autoTemperaturePoint != 'number' || data.autoTemperaturePoint < 0 || data.autoTemperaturePoint > 86) {
-                return "Invalid auto temperature point: " + data.autoTemperaturePoint + ". Expects a number between 0 and 86";
-              }
-              if (typeof data.dryTemperaturePoint != 'number' || data.dryTemperaturePoint < 0 || data.dryTemperaturePoint > 86) {
-                return "Invalid dry temperature point: " + data.dryTemperaturePoint + ". Expects a number between 0 and 86";
-              }
+            generateData: function(data, originalMsg, requester) {
+              var values = require("./values.js").list.ACValues;
 
-              var temperatureType = 0;
-              if(data.temperatureType == null || data.temperatureType == undefined) {
-                return "Invalid temperature type: " + data.temperatureType + ". Expects 'C' or 'F'";
-              }
-              switch(data.temperatureType.toLowerCase()) {
-                case "c": {temperatureType = 0; break;}
-                case "f": {temperatureType = 1; break;}
-                default: {
-                  return "Invalid temperature type: " + data.temperatureType + ". Expects 'C' or 'F'";
-                }
-              }
+              return new Promise((resolve, reject) => {
+                if(typeof(data.number) != "number" || data.number < 1 || data.number > 128){reject("Invalid number must be between 1-128"); return;}
 
-              var mode = 0;
-              var fan = 0;
-              if(data.mode == null || data.mode == undefined) {
-                return "Invalid mode: " + data.mode + ". Expects 'cooling', 'heating', 'fan', 'auto', or 'dry'";
-              }
-              switch(data.mode.toLowerCase()) {
-                case "cooling": {mode = 0; break;}
-                case "heating": {mode = 1; break;}
-                case "fan": {mode = 2; break;}
-                case "auto": {mode = 3; break;}
-                case "dry": {mode = 4; break;}
-                default: {
-                  return "Invalid mode: " + data.mode + ". Expects 'cooling', 'heating', 'fan', 'auto', or 'dry'";
-                }
-              }
+                //First request the current values from the bus
+                requester.send(undefined, {
+                  "payload": {
+                    "operate": "ACControl",
+                    "mode": "get",
+                    "direction": "request",
+                    "data": {"number": data.number},
+                    "subnetId": originalMsg.payload.subnetId,
+                    "deviceId": originalMsg.payload.deviceId
+                }}, function(success, result) {
+                  if(!success) {
+                    reject("Could not get the current state from the bus");
+                  }
+                  else {
+                    console.log(result);
+                    var buffer = result.payload.contents;
+                    console.log(data);
 
-              if(data.fan == null || data.fan == undefined) {
-                return "Invalid fan: " + data.fan + ". Expects 'auto', 'high', 'medium', or 'low'";
-              }
-              switch(data.fan.toLowerCase()) {
-                case "auto": {fan = 0; break;}
-                case "high": {fan = 1; break;}
-                case "medium": {fan = 2; break;}
-                case "low": {fan = 3; break;}
-                default: {
-                  return "Invalid fan: " + data.fan + ". Expects 'auto', 'high', 'medium', or 'low'";
-                }
-              }
-              var encodedModeFanByte = fan + (mode << 5); //may or may not work
+                    if(data.temperatureType !== undefined) {
+                      for(var i in values.tempType) {
+                        if(values.tempType[i] == data.temperatureType){buffer[1] = parseInt(i); break;}
+                      }
+                    }
+                    if(data.currentTemperature !== undefined) {
+                      if(typeof(data.currentTemperature) != "number" || data.currentTemperature < 0 || data.currentTemperature > 99){reject("Invalid current temperature. Must be a number between 0 and 99"); return;}
+                      data[2] = parseInt(data.currentTemperature);
+                    }
+                    if(data.setTemperature !== undefined) {
+                      if(data.setTemperature.cooling !== undefined) {
+                        if(typeof(data.setTemperature.cooling) != "number" || data.setTemperature.cooling < 0 || data.setTemperature.cooling > 86){reject("Invalid set temperature (cooling). Must be a number between 0 and 86"); return;}
+                         data[3] = parseInt(data.data.setTemperature.cooling);
+                      }
+                      if(data.setTemperature.heating !== undefined) {
+                        if(typeof(data.setTemperature.heating) != "number" || data.setTemperature.heating < 0 || data.setTemperature.heating > 86){reject("Invalid set temperature (heating). Must be a number between 0 and 86"); return;}
+                         data[4] = parseInt(data.data.setTemperature.heating);
+                      }
+                      if(data.setTemperature.auto !== undefined) {
+                        if(typeof(data.setTemperature.auto) != "number" || data.setTemperature.auto < 0 || data.setTemperature.auto > 86){reject("Invalid set temperature (auto). Must be a number between 0 and 86"); return;}
+                         data[5] = parseInt(data.data.setTemperature.auto);
+                      }
+                      if(data.setTemperature.dry !== undefined) {
+                        if(typeof(data.setTemperature.dry) != "number" || data.setTemperature.dry < 0 || data.setTemperature.dry > 86){reject("Invalid set temperature (dry). Must be a number between 0 and 86"); return;}
+                         data[6] = parseInt(data.data.setTemperature.dry);
+                      }
+                    }
 
-              if(data.ACStatus == null || data.ACStatus == undefined) {
-                return "Invalid AC status: " + data.ACStatus + ". Expects 'on', or 'off'";
-              }
-              var acStatus = 0;
-              switch(data.ACStatus.toLowerCase()) {
-                case "off": {acStatus = 0; break;}
-                case "on": {acStatus = 1; break;}
-                default: {
-                  return "Invalid AC status: " + data.ACStatus + ". Expects 'on', or 'off'";
-                }
-              }
+                    
+                    if(data.mode !== undefined) {
+                      //TODO
+                    }
+                    if(data.fan !== undefined) {
+                      //TODO
+                    }
 
-              if(data.setupMode == null || data.setupMode == undefined) {
-                return "Invalid setup mode: " + data.setupMode + ". Expects 'cooling', 'heating', 'fan', 'auto', or 'dry'";
-              }
-              var setupMode = 0;
-              switch(data.setupMode.toLowerCase()) {
-                case "cooling": {setupMode = 0; break;}
-                case "heating": {setupMode = 1; break;}
-                case "fan": {setupMode = 2; break;}
-                case "auto": {setupMode = 3; break;}
-                case "dry": {setupMode = 4; break;}
-                default: {
-                  return "Invalid setup mode: " + data.setupMode + ". Expects 'cooling', 'heating', 'fan', 'auto', or 'dry'";
-                }
-              }
 
-              if(data.setupSpeed == null || data.setupSpeed == undefined) {
-                return "Invalid setup speed: " + data.setupSpeed + ". Expects 'auto', 'high', 'medium', or 'low'";
-              }
-              var setupSpeed = 0;
-              switch(data.setupSpeed.toLowerCase()) {
-                case "auto": {setupSpeed = 0; break;}
-                case "high": {setupSpeed = 1; break;}
-                case "medium": {setupSpeed = 2; break;}
-                case "low": {setupSpeed = 3; break;}
-                default: {
-                  return "Invalid setup speed: " + data.setupSpeed + ". Expects 'auto', 'high', 'medium', or 'low'";
-                }
-              }
+                    if(data.state !== undefined) {
+                      if(data.state == true){buffer[8] = 1;}
+                      else if(data.state == false) {buffer[8] = 0;}
+                      else {reject("Invalid state must be a boolean"); return;}
+                    }
+                    if(data.setupMode !== undefined) {
+                      for(var i in values.modes) {
+                        if(values.modes[i] == data.setupMode){buffer[9] = parseInt(i); break;}
+                      }
+                    }
+                    if(data.setupSpeed !== undefined) {
+                      for(var i in values.fanSpeeds) {
+                        if(values.fanSpeeds[i] == data.setupSpeed){buffer[10] = parseInt(i); break;}
+                      }  
+                    }
+                    if(data.currentMode !== undefined) {
+                      //TODO
+                    }
+                    if(data.currentFan !== undefined) {
+                      //TODO
+                    }
+                    if(data.sweep !== undefined) {
+                      //TODO
+                    }
 
-              return Buffer.from([data.ACNumber, temperatureType, data.coolingTemperaturePoint, data.heatingTemperaturePoint, data.autoTemperaturePoint, data.dryTemperaturePoint, mode, fan, acStatus, setupMode, setupSpeed]);
+                    console.log(buffer);
+                    resolve(buffer);
+                  }
+                });
+              });
             }
         },
 
@@ -223,117 +140,43 @@ module.exports = {
             request: 0x1938,
             answerBack: 0x1939,
             processData: function(data) {
-              var tempType = "unknown";
-              if(data[1] == 0){tempType = "C";}else if(data[1] == 1){tempType = "F";}else{tempType = data[1];}
+              var values = require("./values.js").list.ACValues;
+
+              var getBinVal = function(input, from, to) {
+                var bin = (input >>> 0).toString(2).padStart(8, '0');
+                var splitBin = bin.substring(from, to + 1).padStart(8, '0');
+                return parseInt(splitBin, 2);
+              }
+
               var ret = {
-                "ACNumber": data[0],
-                "temperatureType": tempType,
+                "number":  data[0],
+                "temperatureType": values.tempType[data[1]],
                 "currentTemperature": data[2],
-                "coolingTemperaturePoint": data[3],
-                "heatingTemperaturePoint": data[4],
-                "autoTemperaturePoint": data[5],
-                "dryTemperaturePoint": data[6],
-              }
-
-              //Split mode and fan byte into their parts
-              var modeFanBinary = (parseInt(data[7], 16).toString(2)).padStart(8, '0');
-
-              //Get fan
-              var fanHex = parseInt(modeFanBinary.split(0, 4), 2).toString(16).toUpperCase();
-              var fan = null;
-              switch(fanHex) {
-                case 0: {fan = "auto"; break; }
-                case 1: {fan = "high"; break; }
-                case 2: {fan = "medium"; break; }
-                case 3: {fan = "low"; break; }
-                default: {fan = fanHex; break;}
-              }
-              ret["fan"] = fan;
-
-              //Get mode
-              var modeHex = parseInt(modeFanBinary.split(5, 8), 2).toString(16).toUpperCase();
-              var mode = null;
-              switch(modeHex) {
-                case 0: {mode = "cooling"; break; }
-                case 1: {mode = "heating"; break; }
-                case 2: {mode = "fan"; break; }
-                case 3: {mode = "auto"; break; }
-                case 4: {mode = "dry"; break; }
-                default: {mode = modeHex; break;}
-              }
-              ret["mode"] = mode;
-
-              //AC Status
-              switch(data[8]) {
-                case 0: {ret["ACStatus"] = "off"; break;}
-                case 1: {ret["ACStatus"] = "on"; break;}
-                default: {ret["ACStatus"] = data[8]; break;}
-              }
-
-              //Setup mode
-              switch(data[9]) {
-                case 0: {ret["SetupMode"] = "cooling"; break;}
-                case 1: {ret["SetupMode"] = "heating"; break;}
-                case 2: {ret["SetupMode"] = "fan"; break;}
-                case 3: {ret["SetupMode"] = "auto"; break;}
-                case 4: {ret["SetupMode"] = "dry"; break;}
-                default: {ret["SetupMode"] = data[9]; break;}
-              }
-
-              //Setup Speed
-              switch(data[10]) {
-                case 0: {ret["SetupSpeed"] = "auto"; break;}
-                case 1: {ret["SetupSpeed"] = "high"; break;}
-                case 2: {ret["SetupSpeed"] = "medium"; break;}
-                case 3: {ret["SetupSpeed"] = "low"; break;}
-                default: {ret["SetupSpeed"] = data[10]; break;}
-              }
-
-              //Split mode and fan byte into their parts
-              var currentModeFanBinary = (parseInt(data[11], 16).toString(2)).padStart(8, '0');
-
-              //Get fan
-              switch(parseInt(currentModeFanBinary.split(0, 4), 2).toString(16).toUpperCase()) {
-                case 0: {ret["currentFan"] = "auto"; break; }
-                case 1: {ret["currentFan"] = "high"; break; }
-                case 2: {ret["currentFan"] = "medium"; break; }
-                case 3: {ret["currentFan"] = "low"; break; }
-                default: {ret["currentFan"] = parseInt(currentModeFanBinary.split(0, 4), 2).toString(16).toUpperCase(); break;}
-              }
-
-              //Get mode
-              switch(parseInt(currentModeFanBinary.split(5, 8), 2).toString(16).toUpperCase()) {
-                case 0: {ret["currentMode"] = "cooling"; break; }
-                case 1: {ret["currentMode"] = "heating"; break; }
-                case 2: {ret["currentMode"] = "fan"; break; }
-                case 3: {ret["currentMode"] = "auto"; break; }
-                case 4: {ret["currentMode"] = "dry"; break; }
-                default: {ret["currentMode"] = parseInt(currentModeFanBinary.split(5, 8), 2).toString(16).toUpperCase(); break;}
-              }
-
-              //Split sweep byte into their parts
-              var sweepBinary = (parseInt(data[12], 16).toString(2)).padStart(8, '0');
-
-              //Get enable sweep
-              switch(parseInt(sweepBinary.split(0, 4), 2).toString(16).toUpperCase()) {
-                case 0: {ret["sweepEnable"] = "off"; break; }
-                case 1: {ret["sweepEnable"] = "on"; break; }
-                default: {ret["sweepEnable"] = parseInt(sweepBinary.split(0, 4), 2).toString(16).toUpperCase(); break;}
-              }
-
-              //Get sweep
-              switch(parseInt(sweepBinary.split(5, 8), 2).toString(16).toUpperCase()) {
-                case 0: {ret["sweepNow"] = "off"; break; }
-                case 1: {ret["sweepNow"] = "on"; break; }
-                default: {ret["sweepNow"] = parseInt(sweepBinary.split(5, 8), 2).toString(16).toUpperCase(); break;}
-              }
+                "setTemperature": {
+                  "cooling": data[3],
+                  "heating": data[4],
+                  "auto": data[5],
+                  "dry": data[6],
+                },
+                "mode": values.modes[getBinVal(data[7], 0, 3)],
+                "fan": values.fanSpeeds[getBinVal(data[7], 4, 7)],
+                "state": data[8],
+                "setupMode": data[9],
+                "setupSpeed": data[10],
+                "currentMode": values.modes[getBinVal(data[11], 0, 3)],
+                "currentFan": values.fanSpeeds[getBinVal(data[11], 4, 7)],
+                "sweep": {
+                  "enabled": getBinVal(data[12], 0, 3) == 1,
+                  "state": getBinVal(data[12], 4, 7)
+                }
+              };
 
               return ret;
             },
             generateData: function(data) {
-              if (typeof data.ACNumber != 'number'){ return "Invalid AC number: " + data.ACNumber + ". Expected a number from 1 to 128"; }
-              if (data.ACNumber < 1 || data.ACNumber > 128){return "Invalid AC number: " + data.ACNumber + ". This is expected to be a number between 1 and 128";}
-              return Buffer.from([data.ACNumber]);
+              if (typeof data.number != 'number'){ return "Invalid number: " + data.number + ". Expected a number from 1 to 128"; }
+              if (data.number < 1 || data.number > 128){return "Invalid number: " + data.number + ". This is expected to be a number between 1 and 128";}
+              return Buffer.from([data.number]);
             }
         },
 
@@ -341,110 +184,38 @@ module.exports = {
             request: 0x193B,
             answerBack: 0x193B,
             processData: function(data) {
-              var tempType = "unknown";
-              if(data[1] == 0){tempType = "C";}else if(data[1] == 1){tempType = "F";}else{tempType = data[1];}
+              var values = require("./values.js").list.ACValues;
+
+              var getBinVal = function(input, from, to) {
+                var bin = (input >>> 0).toString(2).padStart(8, '0');
+                var splitBin = bin.substring(from, to + 1).padStart(8, '0');
+                return parseInt(splitBin, 2);
+              }
+
+              console.log(data[7]);
+
               var ret = {
-                "ACNumber": data[0],
-                "temperatureType": tempType,
+                "number":  data[0],
+                "temperatureType": values.tempType[data[1]],
                 "currentTemperature": data[2],
-                "coolingTemperaturePoint": data[3],
-                "heatingTemperaturePoint": data[4],
-                "autoTemperturePoint": data[5],
-                "dryTemperaturePoint": data[6],
-              }
-
-              //Split mode and fan byte into their parts
-              var modeFanBinary = (parseInt(data[7], 16).toString(2)).padStart(8, '0');
-
-              //Get fan
-              var fanHex = parseInt(modeFanBinary.split(0, 4), 2).toString(16).toUpperCase();
-              var fan = null;
-              switch(fanHex) {
-                case 0: {fan = "auto"; break; }
-                case 1: {fan = "high"; break; }
-                case 2: {fan = "medium"; break; }
-                case 3: {fan = "low"; break; }
-                default: {fan = fanHex; break;}
-              }
-              ret["fan"] = fan;
-
-              //Get mode
-              var modeHex = parseInt(modeFanBinary.split(5, 8), 2).toString(16).toUpperCase();
-              var mode = null;
-              switch(modeHex) {
-                case 0: {mode = "cooling"; break; }
-                case 1: {mode = "heating"; break; }
-                case 2: {mode = "fan"; break; }
-                case 3: {mode = "auto"; break; }
-                case 4: {mode = "dry"; break; }
-                default: {mode = modeHex; break;}
-              }
-              ret["mode"] = mode;
-
-              //AC Status
-              switch(data[8]) {
-                case 0: {ret["ACStatus"] = "off"; break;}
-                case 1: {ret["ACStatus"] = "on"; break;}
-                default: {ret["ACStatus"] = data[8]; break;}
-              }
-
-              //Setup mode
-              switch(data[9]) {
-                case 0: {ret["SetupMode"] = "cooling"; break;}
-                case 1: {ret["SetupMode"] = "heating"; break;}
-                case 2: {ret["SetupMode"] = "fan"; break;}
-                case 3: {ret["SetupMode"] = "auto"; break;}
-                case 4: {ret["SetupMode"] = "dry"; break;}
-                default: {ret["SetupMode"] = data[9]; break;}
-              }
-
-              //Setup Speed
-              switch(data[10]) {
-                case 0: {ret["SetupSpeed"] = "auto"; break;}
-                case 1: {ret["SetupSpeed"] = "high"; break;}
-                case 2: {ret["SetupSpeed"] = "medium"; break;}
-                case 3: {ret["SetupSpeed"] = "low"; break;}
-                default: {ret["SetupSpeed"] = data[10]; break;}
-              }
-
-              //Split mode and fan byte into their parts
-              var currentModeFanBinary = (parseInt(data[11], 16).toString(2)).padStart(8, '0');
-
-              //Get fan
-              switch(parseInt(currentModeFanBinary.split(0, 4), 2).toString(16).toUpperCase()) {
-                case 0: {ret["currentFan"] = "auto"; break; }
-                case 1: {ret["currentFan"] = "high"; break; }
-                case 2: {ret["currentFan"] = "medium"; break; }
-                case 3: {ret["currentFan"] = "low"; break; }
-                default: {ret["currentFan"] = parseInt(currentModeFanBinary.split(0, 4), 2).toString(16).toUpperCase(); break;}
-              }
-
-              //Get mode
-              switch(parseInt(currentModeFanBinary.split(5, 8), 2).toString(16).toUpperCase()) {
-                case 0: {ret["currentMode"] = "cooling"; break; }
-                case 1: {ret["currentMode"] = "heating"; break; }
-                case 2: {ret["currentMode"] = "fan"; break; }
-                case 3: {ret["currentMode"] = "auto"; break; }
-                case 4: {ret["currentMode"] = "dry"; break; }
-                default: {ret["currentMode"] = parseInt(currentModeFanBinary.split(5, 8), 2).toString(16).toUpperCase(); break;}
-              }
-
-              //Split sweep byte into their parts
-              var sweepBinary = (parseInt(data[12], 16).toString(2)).padStart(8, '0');
-
-              //Get enable sweep
-              switch(parseInt(sweepBinary.split(0, 4), 2).toString(16).toUpperCase()) {
-                case 0: {ret["sweepEnable"] = "off"; break; }
-                case 1: {ret["sweepEnable"] = "on"; break; }
-                default: {ret["sweepEnable"] = parseInt(sweepBinary.split(0, 4), 2).toString(16).toUpperCase(); break;}
-              }
-
-              //Get sweep
-              switch(parseInt(sweepBinary.split(5, 8), 2).toString(16).toUpperCase()) {
-                case 0: {ret["sweepNow"] = "off"; break; }
-                case 1: {ret["sweepNow"] = "on"; break; }
-                default: {ret["sweepNow"] = parseInt(sweepBinary.split(5, 8), 2).toString(16).toUpperCase(); break;}
-              }
+                "setTemperature": {
+                  "cooling": data[3],
+                  "heating": data[4],
+                  "auto": data[5],
+                  "dry": data[6],
+                },
+                "mode": values.modes[getBinVal(data[7], 0, 3)],
+                "fan": values.fanSpeeds[getBinVal(data[7], 4, 7)],
+                "state": data[8],
+                "setupMode": data[9],
+                "setupSpeed": data[10],
+                "currentMode": values.modes[getBinVal(data[11], 0, 3)],
+                "currentFan": values.fanSpeeds[getBinVal(data[11], 4, 7)],
+                "sweep": {
+                  "enabled": getBinVal(data[12], 0, 3) == 1,
+                  "state": getBinVal(data[12], 4, 7)
+                }
+              };
 
               return ret;
             },
