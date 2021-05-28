@@ -334,7 +334,6 @@ module.exports = function(RED)
                         if(res.then !== undefined) {
                             res.then((result) => {
                                 ret.contents = result;
-                                console.log(ret);
                                 resolve(ret);
                             }).catch((rej) => {
                                 reject(rej);
@@ -364,7 +363,7 @@ module.exports = function(RED)
                     }
                     else {
                         sendBuffer[i].attempts += 1;
-                        sendBuffer[i].timeout = 5;
+                        sendBuffer[i].timeout = 20;
 
                         //Send the packet
                         if(server && connected) {
