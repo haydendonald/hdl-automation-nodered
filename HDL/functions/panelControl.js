@@ -1,257 +1,35 @@
 module.exports = {
-    status: "Stable",
+    status: "Testing",
     name: "Panel Control",
     description: "Panel control controls a wall panel",
-
-    commands: {
-      //IR Control
-      1: {
-        "name": "ircontrol",
-        "values": {
-          0: "off",
-          1: "on"
-        }
-      },
-      //Lock Panel
-      2: {
-        "name": "lockpanel",
-        "values": {
-          0: "off",
-          1: "on"
-        }
-      },
-      //AC Power
-      3: {
-        "name": "acpower",
-        "values": {
-          0: "off",
-          1: "on"
-        }
-      },
-      //Cooling Temp
-      4: {
-        "name": "coolingtemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 84
-      },
-      //Fan Speed
-      5: {
-        "name": "fanspeed",
-        "values": {
-          0: "auto",
-          1: "high",
-          2: "medium",
-          3: "low"
-        }
-      },
-      //AC Mode
-      6: {
-        "name": "acmode",
-        "values": {
-          0: "cooling",
-          1: "heating",
-          2: "fan",
-          3: "auto",
-          4: "dehumidify"
-        }
-      },
-      //Heat Temp
-      7: {
-        "name": "heattemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 84
-      },
-      //Auto Temp
-      8: {
-        "name": "autotemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 84
-      },
-      //Rise Temp
-      9: {
-        "name": "risetemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 5
-      },
-      //Decrease Temp
-      10: {
-        "name": "decreasetemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 5
-      },
-      //Backlight status
-      11: {
-        "name": "backlightstatus",
-        "values": {
-          0: "off",
-          1: "on"
-        }
-      },
-      //Lock AC
-      12: {
-        "name": "lockac",
-        "values": {
-          0: "off",
-          1: "on"
-        }
-      },
-      //Backlight level
-      13: {
-        "name": "backlightlevel",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 100
-      },
-      //Status light level
-      14: {
-        "name": "statuslightlevel",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 100
-      },
-      //Shield button
-      15: {
-        "name": "shieldbutton",
-        "values": {
-          0: "off",
-          1: "on"
-        },
-        "requiresSelector": true
-      },
-      //Shield page
-      16: {
-        "name": "shieldpage",
-        "values": {
-          0: "off",
-          1: "on"
-        },
-        "requiresSelector": true
-      },
-      //Control button LED
-      17: {
-        "name": "controlbuttonled",
-        "values": {
-          0: "off",
-          1: "on"
-        },
-        "requiresSelector": true
-      },
-      //Control button
-      18: {
-        "name": "controlbutton",
-        "values": {
-          0: "off",
-          1: "on"
-        },
-        "requiresSelector": true
-      },
-      //Dry temp
-      19: {
-        "name": "drytemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 84
-      },
-      //Temp status
-      20: {
-        "name": "tempstatus",
-        "values": {
-          0: "off",
-          1: "on"
-        }
-      },
-      //Temp status
-      21: {
-        "name": "tempmode",
-        "values": {
-          1: "normal",
-          2: "day",
-          3: "night",
-          4: "away",
-          5: "night"
-        }
-      },
-      //FR rise temp
-      22: {
-        "name": "frrisetemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 5
-      },
-      //FR decrease temp
-      23: {
-        "name": "frdecreasetemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 5
-      },
-      //Lock setup page
-      24: {
-        "name": "locksetuppage",
-        "values": {
-          0: "off",
-          1: "on"
-        }
-      },
-      //Normal temp
-      25: {
-        "name": "normaltemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 84
-      },
-      //Day temp
-      26: {
-        "name": "daytemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 84
-      },
-      //Night temp
-      27: {
-        "name": "nighttemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 84
-      },
-      //Away temp
-      28: {
-        "name": "awaytemp",
-        "values": {},
-        "minValue": 0,
-        "maxValue": 84
-      },
-    },
 
     actions: {
         set: {
             request: 0xE3D8,
             answerBack: 0xE3D9,
-            processData: function(data, func) {
+            processData: function(data) {
+              var functions = require("./values.js").list.PanelValues;
 
+              var func = functions[data[0]];
+              //console.log(func);
 
-              console.log(func);
-
-              if(data.length == 2) {
+              if(func === undefined) {
                 return {
-                  "function": functions[data[0]].name || data[0],
-                  "value": functions[data[0]].values[data[1]] || data[1]
+                  "function": data[0],
+                  "value": data
                 }
               }
               else {
-                return {
-                  "function": functions[data[0]].name || data[0],
-                  "selector": data[1],
-                  "value": functions[data[0]].values[data[2]] || data[2]
-                }      
+                console.log(func.name);
+                console.log(func.process);
+                console.log({
+                  "function": func.name || data[0],
+                  "value": func.process(data) || data
+                });
               }
             },
-            generateData: function(data, func) {
+            generateData: function(data) {
+              var functions = require("./values.js").list.PanelValues;
               var func = undefined;
               var values = [];
               
@@ -291,30 +69,37 @@ module.exports = {
         get: {
             request: 0xE3DA,
             answerBack: 0xE3DB,
-            processData: function(data, func) {
-              if(data.length == 2) {
+            processData: function(data) {
+              var functions = require("./values.js").list.PanelValues;
+
+              var func = functions[data[0]];
+              //console.log(func);
+
+              if(func === undefined) {
                 return {
-                  "function": functions[data[0]].name || data[0],
-                  "value": functions[data[0]].values[data[1]] || data[1]
+                  "function": data[0],
+                  "value": data
                 }
               }
               else {
-                return {
-                  "function": functions[data[0]].name || data[0],
-                  "selector": data[1],
-                  "value": functions[data[0]].values[data[2]] || data[2]
-                }      
+                console.log(func.name);
+                console.log(func.process);
+                console.log({
+                  "function": func.name || data[0],
+                  "value": func.process(data) || data
+                });
               }
             },
             generateData: function(data, func) {
+              var functions = require("./values.js").list.PanelValues;
               var func = undefined;
               var values = [];
-              
+
               //Find the function
               for(var i in functions) {
                 if(functions[i].name == data.function){func = parseInt(i); break;}
               }
-              if(func === undefined){return "Could not find the function..";}
+              if(func === undefined){return "Could not find the function: " + data.function;}
 
               //If there is a selector add it
               if(functions[func].requiresSelector) {

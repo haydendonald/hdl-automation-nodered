@@ -98,7 +98,7 @@ Sequence control selects a sequence within a area
         - **value** = 0-100
       - "statuslightlevel"
         - **value** = 0-100
-      - "sheildbutton"
+      - "shieldbutton"
         - **selector** (button) = 1-255
         - **value** = "on/off"
       - "shieldpage"
