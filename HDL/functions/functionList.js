@@ -4,10 +4,12 @@ module.exports = {
         UVSwitch: require("./UVSwitch.js"),
         dateTime: require("./dateTime.js"),
         sequenceControl: require("./sequenceControl.js"),
-        panelControl: require("./panelControl.js"),
+        //panelControl: require("./panelControl.js"),
         ACControl: require("./ACControl.js"),
         singleChannelControl: require("./singleChannelControl.js"),
-        dryContact: require("./dryContact.js")
+        dryContact: require("./dryContact.js"),
+        readTemperatureOld: require("./readTemperatureOld.js"),
+        readTemperature: require("./readTemperature.js")
     },
 
     //Find the opCode of a function
@@ -73,12 +75,12 @@ module.exports = {
          }
     },
 
-    generateContentsFromData: function(command, data) {
+    generateContentsFromData: function(command, data, originalMsg, requester) {
         for(var key in this.list) {
             for(var key2 in this.list[key].actions) {
                 for(var key3 in this.list[key].actions[key2]) {
                     if(this.list[key].actions[key2][key3] == command) {
-                        return this.list[key].actions[key2].generateData(data);
+                        return this.list[key].actions[key2].generateData(data, originalMsg, requester);
                     }
                 }
             }
@@ -98,5 +100,22 @@ module.exports = {
             }
         }
         return 0x00;
-    }
+    },
+
+    //Convert a int to binary string
+    intToBin: function(input, padding=8) {
+        return (input >>> 0).toString(2).padStart(padding, '0');
+    },
+
+    //Convert a binary string to integer
+    binToInt: function(input, padding=8) {
+        return parseInt(input.padStart(padding, '0'), 2);
+    },
+
+    //Get a bit part value from a value
+    getBinVal: function(input, from, to) {
+        var bin = require("./functionList.js").intToBin(input, 8); //Not sure why this is not working in this context..
+        var splitBin = bin.substring(from, to + 1).padStart(8, '0');
+        return parseInt(splitBin, 2);
+    },
 }

@@ -119,220 +119,237 @@ module.exports = function(RED)
         }
 
         //Send a message to the HDL bus
-        node.send = function(sender, msg, answerbackHandler) { 
-            //Validate the msg    
-            var sendMsg = node.sendMsg(sender, msg);
-            if(sendMsg == false){answerbackHandler(false); return false;}
-            
+        node.send = function(sender, msg, answerbackHandler) {
+            return new Promise((resolve, reject) => {
+                //Validate the msg    
+                node.sendMsg(sender, msg).then((sendMsg) => {
+                    var command = sendMsg.command;
+                    var targetSubnetID = sendMsg.targetSubnetID;
+                    var targetDeviceID = sendMsg.targetDeviceID;
+                    var contents = sendMsg.contents;
 
-            var command = sendMsg.command;
-            var targetSubnetID = sendMsg.targetSubnetID;
-            var targetDeviceID = sendMsg.targetDeviceID;
-            var contents = sendMsg.contents;
+                    //Validate
+                    if(!/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(localIpAddress)){
+                        node.error("Invalid Local IP Address: " + localIpAddress);
+                        node.sendStatus("red", "Internal Error", "Invalid IP Address");
+                        reject();
+                    }
+                    if(typeof targetSubnetID != 'number'){
+                        node.error("Invalid Subnet ID: " + targetSubnetID);
+                        node.sendStatus("red", "Internal Error", "Invalid Subnet ID");
+                        reject();
+                    }
+                    if(typeof targetDeviceID != 'number'){
+                        node.error("Invalid Device ID: " + targetDeviceID);
+                        node.sendStatus("red", "Internal Error", "Invalid Device ID");
+                        reject();
+                    }
+                    if(!Buffer.isBuffer(contents)){
+                        node.error("Invalid Contents Buffer: " + contents);
+                        node.sendStatus("red", "Internal Error", "Invalid Contents");
+                        reject();
+                    }
+                    if(localSubnet < 0 || localSubnet > 254) {
+                        node.error("Local subnet ID out of range: " + localSubnet);
+                        node.sendStatus("red", "Internal Error", "Out of Range Parameter");
+                        reject();
+                    }
+                    if(localDeviceId < 0 || localDeviceId > 254) {
+                        node.error("Local device ID out of range: " + localDeviceId);
+                        node.sendStatus("red", "Internal Error", "Out of Range Parameter");
+                        reject();
+                    }
+                    if(command < 0 || command > 65535) {
+                        node.error("Command out of range: " + command);
+                        node.sendStatus("red", "Internal Error", "Out of Range Parameter");
+                        reject();
+                    }
+                    if(targetDeviceID < 0 || targetDeviceID > 254) {
+                        node.error("Target device ID out of range: " + targetDeviceID);
+                        node.sendStatus("red", "Internal Error", "Out of Range Parameter");
+                        reject();
+                    }
+                    if(targetSubnetID < 0 || targetSubnetID > 254) {
+                        node.error("Target subnet ID out of range: " + targetSubnetID);
+                        node.sendStatus("red", "Internal Error", "Out of Range Parameter");
+                        reject();
+                    }
+                    if(targetDeviceID < 0 || targetDeviceID > 254) {
+                        node.error("Target device ID out of range: " + targetDeviceID);
+                        node.sendStatus("red", "Internal Error", "Out of Range Parameter");
+                        reject();
+                    }
 
-            //Validate
-            if(!/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(localIpAddress)){
-                node.error("Invalid Local IP Address: " + localIpAddress);
-                node.sendStatus("red", "Internal Error", "Invalid IP Address");
-                return false;
-            }
-            if(typeof targetSubnetID != 'number'){
-                node.error("Invalid Subnet ID: " + targetSubnetID);
-                node.sendStatus("red", "Internal Error", "Invalid Subnet ID");
-                return false;
-            }
-            if(typeof targetDeviceID != 'number'){
-                node.error("Invalid Device ID: " + targetDeviceID);
-                node.sendStatus("red", "Internal Error", "Invalid Device ID");
-                return false;
-            }
-            if(!Buffer.isBuffer(contents)){
-                node.error("Invalid Contents Buffer: " + contents);
-                node.sendStatus("red", "Internal Error", "Invalid Contents");
-                return false;
-            }
-            if(localSubnet < 0 || localSubnet > 254) {
-                node.error("Local subnet ID out of range: " + localSubnet);
-                node.sendStatus("red", "Internal Error", "Out of Range Parameter");
-                return false;
-            }
-            if(localDeviceId < 0 || localDeviceId > 254) {
-                node.error("Local device ID out of range: " + localDeviceId);
-                node.sendStatus("red", "Internal Error", "Out of Range Parameter");
-                return false;
-            }
-            if(command < 0 || command > 65535) {
-                node.error("Command out of range: " + command);
-                node.sendStatus("red", "Internal Error", "Out of Range Parameter");
-                return false;
-            }
-            if(targetDeviceID < 0 || targetDeviceID > 254) {
-                node.error("Target device ID out of range: " + targetDeviceID);
-                node.sendStatus("red", "Internal Error", "Out of Range Parameter");
-                return false;
-            }
-            if(targetSubnetID < 0 || targetSubnetID > 254) {
-                node.error("Target subnet ID out of range: " + targetSubnetID);
-                node.sendStatus("red", "Internal Error", "Out of Range Parameter");
-                return false;
-            }
-            if(targetDeviceID < 0 || targetDeviceID > 254) {
-                node.error("Target device ID out of range: " + targetDeviceID);
-                node.sendStatus("red", "Internal Error", "Out of Range Parameter");
-                return false;
-            }
+                    //Create the ip address buffer
+                    var ipBuffer = new Buffer.alloc(4);
+                    ipBuffer.writeUInt8(localIpAddress.split('.')[0], 0);
+                    ipBuffer.writeUInt8(localIpAddress.split('.')[1], 1);
+                    ipBuffer.writeUInt8(localIpAddress.split('.')[2], 2);
+                    ipBuffer.writeUInt8(localIpAddress.split('.')[3], 3);
 
-            //Create the ip address buffer
-            var ipBuffer = new Buffer.alloc(4);
-            ipBuffer.writeUInt8(localIpAddress.split('.')[0], 0);
-            ipBuffer.writeUInt8(localIpAddress.split('.')[1], 1);
-            ipBuffer.writeUInt8(localIpAddress.split('.')[2], 2);
-            ipBuffer.writeUInt8(localIpAddress.split('.')[3], 3);
+                    //Constant buffer
+                    var constBuffer = new Buffer.from("HDLMIRACLE");
+                    var leadBuffer = new Buffer.alloc(2);
+                    leadBuffer.writeUInt16BE(0xAAAA, 0);
 
-            //Constant buffer
-            var constBuffer = new Buffer.from("HDLMIRACLE");
-            var leadBuffer = new Buffer.alloc(2);
-            leadBuffer.writeUInt16BE(0xAAAA, 0);
+                    //Data buffer
+                    //Calculate the length of the packet
+                    var length = 11;
+                    var localDeviceType = 0xFFFE;
+                    if(contents){length += contents.length;}
+                    if(length < 0 || length > 78) {
+                        node.error("Data package size incorrect: " + length);
+                        node.sendStatus("red", "Internal Error", "Data package size incorrect");
+                        reject();
+                    }
 
-            //Data buffer
-            //Calculate the length of the packet
-            var length = 11;
-            var localDeviceType = 0xFFFE;
-            if(contents){length += contents.length;}
-            if(length < 0 || length > 78) {
-                node.error("Data package size incorrect: " + length);
-                node.sendStatus("red", "Internal Error", "Data package size incorrect");
-                return false;
-            }
+                    var dataBuffer = new Buffer.alloc(9);
+                    dataBuffer.writeUInt8(length, 0);
+                    dataBuffer.writeUInt8(localSubnet, 1);
+                    dataBuffer.writeUInt8(localDeviceId, 2);
+                    dataBuffer.writeUInt16BE(localDeviceType, 3);
+                    dataBuffer.writeUInt16BE(command, 5);
+                    dataBuffer.writeUInt8(targetSubnetID, 7);
+                    dataBuffer.writeUInt8(targetDeviceID, 8);
 
-            var dataBuffer = new Buffer.alloc(9);
-            dataBuffer.writeUInt8(length, 0);
-            dataBuffer.writeUInt8(localSubnet, 1);
-            dataBuffer.writeUInt8(localDeviceId, 2);
-            dataBuffer.writeUInt16BE(localDeviceType, 3);
-            dataBuffer.writeUInt16BE(command, 5);
-            dataBuffer.writeUInt8(targetSubnetID, 7);
-            dataBuffer.writeUInt8(targetDeviceID, 8);
+                    //CRC buffer
+                    var CRCBuffer = new Buffer.alloc(2);
+                    CRCBuffer.writeUInt16BE(crc(Buffer.concat([dataBuffer, contents])), 0);
 
-            //CRC buffer
-            var CRCBuffer = new Buffer.alloc(2);
-            CRCBuffer.writeUInt16BE(crc(Buffer.concat([dataBuffer, contents])), 0);
+                    //Add all the buffers together to create the final packet to be sent
+                    var finalPacket = Buffer.concat([ipBuffer, constBuffer, leadBuffer, dataBuffer, contents, CRCBuffer]);
 
-            //Add all the buffers together to create the final packet to be sent
-            var finalPacket = Buffer.concat([ipBuffer, constBuffer, leadBuffer, dataBuffer, contents, CRCBuffer]);
-
-            //Push to the send buffer to be processed
-            sendBuffer.push({
-                "sender": sender,
-                "inputMessage": msg,
-                "answerbackHandler": answerbackHandler,
-                "packet": finalPacket,
-                "contentsPacket": contents,
-                "targetedSubnetId": targetSubnetID,
-                "targetedDeviceId": targetDeviceID,
-                "answerbackOpCode": functions.findReplyCode(command),
-                "attempts": 0,
-                "timeout": 0
+                    //Push to the send buffer to be processed
+                    sendBuffer.push({
+                        "sender": sender,
+                        "inputMessage": msg,
+                        "answerbackHandler": answerbackHandler,
+                        "packet": finalPacket,
+                        "contentsPacket": contents,
+                        "targetedSubnetId": targetSubnetID,
+                        "targetedDeviceId": targetDeviceID,
+                        "answerbackOpCode": functions.findReplyCode(command),
+                        "attempts": 0,
+                        "timeout": 0
+                    });
+                    
+                    resolve();
+                }).catch((error) => {
+                    answerbackHandler(error);
+                    reject(error);
+                });
             });
-
-            //processSendBuffer();
         }
 
         //Generate a message to the hdl bus that is formatted as a msg object
         //Returns a json with the values to be sent over the bus
         node.sendMsg = function(sender, msg) {
-            var opCode = msg.payload.opCode;
-            var subnetId = msg.payload.subnetId;
-            var deviceId = msg.payload.deviceId;
-            var operate = msg.payload.operate;
-            var mode = msg.payload.mode;
-            var direction = msg.payload.direction;
-            var data = msg.payload.data;
-            var contents = msg.payload.contents;
-
-            //Validate and find raw values
-
-            //Subnet ID and Device ID
-            if(typeof subnetId != 'number'){
-                node.error("Error: invalid subnetId. An subnetId is expected to be a number between 0 and 254");
-                node.sendStatus("yellow", "Invalid Input", "Invalid subnetId");
-                return false;
-            }
-            if(typeof deviceId != 'number'){
-                node.error("Error: invalid deviceId. An deviceId is expected to be a number between 0 and 254");
-                node.sendStatus("yellow", "Invalid Input", "Invalid deviceId");
-                return false;
-            }
-
-            //Operate
-            if(operate === null || operate === undefined) {
-                if(opCode === null || opCode === undefined) {
-                    node.error("Error: No operate or opCode parameter was found.");
-                    node.sendStatus("yellow", "Invalid Input", "No operate or opCode");
-                    return false;
+            return new Promise((resolve, reject) => {
+                var opCode = msg.payload.opCode;
+                var subnetId = msg.payload.subnetId;
+                var deviceId = msg.payload.deviceId;
+                var operate = msg.payload.operate;
+                var mode = msg.payload.mode;
+                var direction = msg.payload.direction;
+                var data = msg.payload.data;
+                var contents = msg.payload.contents;
+    
+                //Validate and find raw values
+    
+                //Subnet ID and Device ID
+                if(typeof subnetId != 'number'){
+                    node.error("Error: invalid subnetId. An subnetId is expected to be a number between 0 and 254");
+                    node.sendStatus("yellow", "Invalid Input", "Invalid subnetId");
+                    reject();
                 }
-                else {
-                    //opCode
-                    if(typeof opCode == "number") {
-                        if(opCode >= 0 && opCode <= 65535) {
-                            //We are in opCode mode so now we'll check that all parameters are found
-                            if(!Buffer.isBuffer(contents)){
-                                node.error("Error: Invalid contents this should be a buffer of hex");
-                                node.sendStatus("yellow", "Internal Error", "Invalid Contents");
-                                return false;
+                if(typeof deviceId != 'number'){
+                    node.error("Error: invalid deviceId. An deviceId is expected to be a number between 0 and 254");
+                    node.sendStatus("yellow", "Invalid Input", "Invalid deviceId");
+                    reject();
+                }
+    
+                //Operate
+                if(operate === null || operate === undefined) {
+                    if(opCode === null || opCode === undefined) {
+                        node.error("Error: No operate or opCode parameter was found.");
+                        node.sendStatus("yellow", "Invalid Input", "No operate or opCode");
+                        reject();
+                    }
+                    else {
+                        //opCode
+                        if(typeof opCode == "number") {
+                            if(opCode >= 0 && opCode <= 65535) {
+                                //We are in opCode mode so now we'll check that all parameters are found
+                                if(!Buffer.isBuffer(contents)){
+                                    node.error("Error: Invalid contents this should be a buffer of hex");
+                                    node.sendStatus("yellow", "Internal Error", "Invalid Contents");
+                                    reject();
+                                }
+                            }
+                            else {
+                                node.error("Error: Invalid opCode: " + operate + ". The command is out of range, it should be between 0 and 65535");
+                                node.sendStatus("yellow", "Invalid Input", "Invalid opCode");
+                                reject();
                             }
                         }
                         else {
-                            node.error("Error: Invalid opCode: " + operate + ". The command is out of range, it should be between 0 and 65535");
+                            node.error("Error: Invalid opCode: " + operate + ". This should be a String");
                             node.sendStatus("yellow", "Invalid Input", "Invalid opCode");
-                            return false;
+                            reject();
                         }
                     }
+                }
+                else if(typeof operate == "string"){
+                    //We are in operate mode so now we'll need to search and find all required parameters for the operate command
+                    if(typeof mode != "string"){
+                        node.error("Error: invalid mode. The mode should be a String");
+                        node.sendStatus("yellow", "Invalid Input", "Invalid mode");
+                        reject();
+                    }
+                    if(typeof direction != "string"){
+                        node.error("Error: invalid direction. The direction should be a String");
+                        node.sendStatus("yellow", "Invalid Input", "Invalid direction");
+                        reject();
+                    }
+    
+                    opCode = functions.findOpCode(operate, mode, direction);
+                    if(opCode === undefined || opCode === null){
+                        node.error("Error: The opCode for the function " + operate + " was not found! Check the operate, direction and mode");
+                        node.sendStatus("red", "Error", "opCode not found for function");
+                        reject();
+                    }
+
+                    var ret = {
+                        "command": opCode,
+                        "targetSubnetID": subnetId,
+                        "targetDeviceID": deviceId,
+                        "contents": contents,
+                    }
+    
+                    //If the contents buffer is not defined generate it otherwise we'll just send that
+                    if(!Buffer.isBuffer(contents)){
+                        var res = functions.generateContentsFromData(opCode, data, msg, this);
+    
+                        //If its a promise handle it differently
+                        if(res.then !== undefined) {
+                            res.then((result) => {
+                                ret.contents = result;
+                                resolve(ret);
+                            }).catch((rej) => {
+                                reject(rej);
+                            })
+                        }
+                        else {ret.contents = res; resolve(ret);}
+                    }
                     else {
-                        node.error("Error: Invalid opCode: " + operate + ". This should be a String");
-                        node.sendStatus("yellow", "Invalid Input", "Invalid opCode");
-                        return false;
+                        resolve(ret);
                     }
                 }
-            }
-            else if(typeof operate == "string"){
-                //We are in operate mode so now we'll need to search and find all required parameters for the operate command
-                if(typeof mode != "string"){
-                    node.error("Error: invalid mode. The mode should be a String");
-                    node.sendStatus("yellow", "Invalid Input", "Invalid mode");
-                    return false;
+                else {
+                    node.error("Error: Invalid operate: " + operate + ". This should be a String");
+                    node.sendStatus("yellow", "Invalid Input", "Invalid operate");
                 }
-                if(typeof direction != "string"){
-                    node.error("Error: invalid direction. The direction should be a String");
-                    node.sendStatus("yellow", "Invalid Input", "Invalid direction");
-                    return false;
-                }
-
-                opCode = functions.findOpCode(operate, mode, direction);
-                if(opCode === undefined || opCode === null){
-                    node.error("Error: The opCode for the function " + operate + " was not found! Check the operate, direction and mode");
-                    node.sendStatus("red", "Error", "opCode not found for function");
-                    return false;
-                }
-
-                //If the contents buffer is not defined generate it otherwise we'll just send that
-                if(!Buffer.isBuffer(contents)){
-                    contents = functions.generateContentsFromData(opCode, data);
-                }
-            }
-            else {
-                node.error("Error: Invalid operate: " + operate + ". This should be a String");
-                node.sendStatus("yellow", "Invalid Input", "Invalid operate");
-            }
-
-            var ret = {
-                "command": opCode,
-                "targetSubnetID": subnetId,
-                "targetDeviceID": deviceId,
-                "contents": contents,
-            }
-
-            return ret;
+            });
         }
 
         //Send out all commands in the send buffer
@@ -346,7 +363,7 @@ module.exports = function(RED)
                     }
                     else {
                         sendBuffer[i].attempts += 1;
-                        sendBuffer[i].timeout = 5;
+                        sendBuffer[i].timeout = 20;
 
                         //Send the packet
                         if(server && connected) {

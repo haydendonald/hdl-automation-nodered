@@ -154,7 +154,7 @@ module.exports = function(RED)
           //Send it!
           node.status({fill:"orange",shape:"dot",text:"Sending..."});
           network.send(node, msg, function(success, packet) {
-              if(success) {
+              if(success == true) {
                   node.status({fill:"green",shape:"dot",text:"Sent!"});
                   node.sendMessage(packet);
               }
@@ -162,7 +162,7 @@ module.exports = function(RED)
                   node.status({fill:"red",shape:"dot",text:"Failed"});
                   node.error("Failed to send command: " + success);
               }
-          });
+          }).catch((error)=>{});
         });
 
         //Add the node information to the msg object
