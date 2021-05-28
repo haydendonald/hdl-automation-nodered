@@ -1,5 +1,5 @@
 module.exports = {
-    status: "Testing",
+    status: "Stable",
     name: "AC Control",
     description: "Controls AC units",
 
@@ -9,17 +9,12 @@ module.exports = {
             answerBack: 0x193B,
             processData: function(data) {
               var values = require("./values.js").list.ACValues;
-
-              var getBinVal = function(input, from, to) {
-                var bin = (input >>> 0).toString(2).padStart(8, '0');
-                var splitBin = bin.substring(from, to + 1).padStart(8, '0');
-                return parseInt(splitBin, 2);
-              }
+              var getBinVal = require("./functionList.js").getBinVal;
 
 
               var ret = {
                 "number":  data[0],
-                "temperatureType": values.tempType[data[1]],
+                "temperatureType": values.tempType[data[1]] || data[1],
                 "currentTemperature": data[2],
                 "setTemperature": {
                   "cooling": data[3],
@@ -30,10 +25,10 @@ module.exports = {
                 "mode": values.modes[getBinVal(data[7], 0, 3)],
                 "fan": values.fanSpeeds[getBinVal(data[7], 4, 7)],
                 "state": data[8],
-                "setupMode": data[9],
-                "setupSpeed": data[10],
-                "currentMode": values.modes[getBinVal(data[11], 0, 3)],
-                "currentFan": values.fanSpeeds[getBinVal(data[11], 4, 7)],
+                "setupMode": values.modes[data[9]] || data[9],
+                "setupSpeed": values.fanSpeeds[data[10]] || data[10],
+                "currentMode": values.modes[getBinVal(data[11], 0, 3)] || getBinVal(data[11], 0, 3),
+                "currentFan": values.fanSpeeds[getBinVal(data[11], 4, 7)] || getBinVal(data[11], 4, 7),
                 "sweep": {
                   "enabled": getBinVal(data[12], 0, 3) == 1,
                   "state": getBinVal(data[12], 4, 7)
@@ -44,6 +39,7 @@ module.exports = {
             },
             generateData: function(data, originalMsg, requester) {
               var values = require("./values.js").list.ACValues;
+              var functionList = require("./functionList.js");
 
               return new Promise((resolve, reject) => {
                 if(typeof(data.number) != "number" || data.number < 1 || data.number > 128){reject("Invalid number must be between 1-128"); return;}
@@ -62,44 +58,57 @@ module.exports = {
                     reject("Could not get the current state from the bus");
                   }
                   else {
-                    console.log(result);
                     var buffer = result.payload.contents;
-                    console.log(data);
 
                     if(data.temperatureType !== undefined) {
                       for(var i in values.tempType) {
-                        if(values.tempType[i] == data.temperatureType){buffer[1] = parseInt(i); break;}
+                        if(values.tempType[i].toUpperCase() == data.temperatureType.toUpperCase()){buffer[1] = parseInt(i); break;}
                       }
                     }
                     if(data.currentTemperature !== undefined) {
                       if(typeof(data.currentTemperature) != "number" || data.currentTemperature < 0 || data.currentTemperature > 99){reject("Invalid current temperature. Must be a number between 0 and 99"); return;}
-                      data[2] = parseInt(data.currentTemperature);
+                      buffer[2] = parseInt(data.currentTemperature);
                     }
                     if(data.setTemperature !== undefined) {
                       if(data.setTemperature.cooling !== undefined) {
                         if(typeof(data.setTemperature.cooling) != "number" || data.setTemperature.cooling < 0 || data.setTemperature.cooling > 86){reject("Invalid set temperature (cooling). Must be a number between 0 and 86"); return;}
-                         data[3] = parseInt(data.data.setTemperature.cooling);
+                        buffer[3] = parseInt(data.data.setTemperature.cooling);
                       }
                       if(data.setTemperature.heating !== undefined) {
                         if(typeof(data.setTemperature.heating) != "number" || data.setTemperature.heating < 0 || data.setTemperature.heating > 86){reject("Invalid set temperature (heating). Must be a number between 0 and 86"); return;}
-                         data[4] = parseInt(data.data.setTemperature.heating);
+                        buffer[4] = parseInt(data.data.setTemperature.heating);
                       }
                       if(data.setTemperature.auto !== undefined) {
                         if(typeof(data.setTemperature.auto) != "number" || data.setTemperature.auto < 0 || data.setTemperature.auto > 86){reject("Invalid set temperature (auto). Must be a number between 0 and 86"); return;}
-                         data[5] = parseInt(data.data.setTemperature.auto);
+                        buffer[5] = parseInt(data.data.setTemperature.auto);
                       }
                       if(data.setTemperature.dry !== undefined) {
                         if(typeof(data.setTemperature.dry) != "number" || data.setTemperature.dry < 0 || data.setTemperature.dry > 86){reject("Invalid set temperature (dry). Must be a number between 0 and 86"); return;}
-                         data[6] = parseInt(data.data.setTemperature.dry);
+                        buffer[6] = parseInt(data.data.setTemperature.dry);
                       }
                     }
 
                     
-                    if(data.mode !== undefined) {
-                      //TODO
-                    }
-                    if(data.fan !== undefined) {
-                      //TODO
+                    if(data.mode !== undefined || data.fan !== undefined) {
+                      var modeBin = "";
+                      var fanBin = "";
+
+                      //Attempt to find the values
+                      if(data.mode !== undefined) {
+                        for(var i in values.modes){if(values.modes[i].toUpperCase() == data.mode.toUpperCase()){modeBin = functionList.intToBin(i, 4); break;}}
+                      }
+                      if(data.fan !== undefined) {
+                        for(var i in values.fanSpeeds){if(values.fanSpeeds[i].toUpperCase() == data.fan.toUpperCase()){fanBin = functionList.intToBin(i, 4); break;}}
+                      }
+
+                      //If they passed an int set the int value
+                      if(modeBin == "" && typeof(data.mode) == "number"){modeBin = functionList.intToBin(parseInt(data.mode), 4);}
+                      if(fanBin == "" && typeof(data.fan) == "number"){fanBin = functionList.intToBin(parseInt(data.fan), 4);}
+                      
+                      if(modeBin == "" && fanBin == "") {reject("Mode or Fan was not valid. These should be a string value"); return;}
+                      if(modeBin == ""){modeBin = functionList.intToBin(functionList.getBinVal(buffer[7], 0, 3), 4);}
+                      if(fanBin == ""){fanBin = functionList.intToBin(functionList.getBinVal(buffer[7], 4, 7), 4);}
+                      buffer[7] = functionList.binToInt(modeBin + fanBin);
                     }
 
 
@@ -118,17 +127,45 @@ module.exports = {
                         if(values.fanSpeeds[i] == data.setupSpeed){buffer[10] = parseInt(i); break;}
                       }  
                     }
-                    if(data.currentMode !== undefined) {
-                      //TODO
-                    }
-                    if(data.currentFan !== undefined) {
-                      //TODO
-                    }
-                    if(data.sweep !== undefined) {
-                      //TODO
+                    
+                    //Not sure if this works or not
+                    if(data.currentMode !== undefined || data.currentFan !== undefined) {
+                      var modeBin = "";
+                      var fanBin = "";
+
+                      //Attempt to find the values
+                      if(data.currentMode !== undefined) {
+                        for(var i in values.modes){if(values.modes[i].toUpperCase() == data.currentMode.toUpperCase()){modeBin = functionList.intToBin(i, 4); break;}}
+                      }
+                      if(data.currentFan !== undefined) {
+                        for(var i in values.fanSpeeds){if(values.fanSpeeds[i].toUpperCase() == data.currentFan.toUpperCase()){fanBin = functionList.intToBin(i, 4); break;}}
+                      }
+
+                      //If they passed an int set the int value
+                      if(modeBin == "" && typeof(data.currentMode) == "number"){modeBin = functionList.intToBin(parseInt(data.currentMode), 4);}
+                      if(fanBin == "" && typeof(data.currentFan) == "number"){fanBin = functionList.intToBin(parseInt(data.currentFan), 4);}
+
+                      if(modeBin == "" && fanBin == "") {reject("Mode or Fan was not valid. These should be a string value"); return;}
+                      if(modeBin == ""){modeBin = functionList.intToBin(functionList.getBinVal(buffer[11], 0, 3), 4);}
+                      if(fanBin == ""){fanBin = functionList.intToBin(functionList.getBinVal(buffer[11], 4, 7), 4);}
+                      buffer[11] = functionList.binToInt(modeBin + fanBin);
                     }
 
-                    console.log(buffer);
+                    if(data.sweep !== undefined) {
+                      if(data.sweep.enabled !== undefined && data.sweep.state !== undefined) {
+                        var enabledBin = "";
+                        var stateBin = "";
+
+                        if(data.sweep.enabled !== undefined){enabledBin = functionList.intToBin(data.sweep.enabled == true ? 1 : 0);}
+                        if(data.sweep.state !== undefined){stateBin = functionList.intToBin(parseInt(data.sweep.state));}
+
+                        if(enabledBin == "" && stateBin == "") {reject("Sweep was not valid. These should be a object value with enabled and state"); return;}
+                        if(enabledBin == ""){enabledBin = functionList.intToBin(functionList.getBinVal(buffer[12], 0, 3), 4);}
+                        if(stateBin == ""){stateBin = functionList.intToBin(functionList.getBinVal(buffer[12], 4, 7), 4);}
+                        buffer[12] = functionList.binToInt(enabledBin + stateBin);
+                      }
+                    }
+
                     resolve(buffer);
                   }
                 });
@@ -141,12 +178,7 @@ module.exports = {
             answerBack: 0x1939,
             processData: function(data) {
               var values = require("./values.js").list.ACValues;
-
-              var getBinVal = function(input, from, to) {
-                var bin = (input >>> 0).toString(2).padStart(8, '0');
-                var splitBin = bin.substring(from, to + 1).padStart(8, '0');
-                return parseInt(splitBin, 2);
-              }
+              var getBinVal = require("./functionList.js").getBinVal;
 
               var ret = {
                 "number":  data[0],
@@ -185,14 +217,7 @@ module.exports = {
             answerBack: 0x193B,
             processData: function(data) {
               var values = require("./values.js").list.ACValues;
-
-              var getBinVal = function(input, from, to) {
-                var bin = (input >>> 0).toString(2).padStart(8, '0');
-                var splitBin = bin.substring(from, to + 1).padStart(8, '0');
-                return parseInt(splitBin, 2);
-              }
-
-              console.log(data[7]);
+              var getBinVal = require("./functionList.js").getBinVal;
 
               var ret = {
                 "number":  data[0],

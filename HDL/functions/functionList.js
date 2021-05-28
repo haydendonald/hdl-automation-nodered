@@ -100,5 +100,22 @@ module.exports = {
             }
         }
         return 0x00;
-    }
+    },
+
+    //Convert a int to binary string
+    intToBin: function(input, padding=8) {
+        return (input >>> 0).toString(2).padStart(padding, '0');
+    },
+
+    //Convert a binary string to integer
+    binToInt: function(input, padding=8) {
+        return parseInt(input.padStart(padding, '0'), 2);
+    },
+
+    //Get a bit part value from a value
+    getBinVal: function(input, from, to) {
+        var bin = require("./functionList.js").intToBin(input, 8); //Not sure why this is not working in this context..
+        var splitBin = bin.substring(from, to + 1).padStart(8, '0');
+        return parseInt(splitBin, 2);
+    },
 }

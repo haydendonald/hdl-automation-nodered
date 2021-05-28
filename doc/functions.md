@@ -157,16 +157,14 @@ msg.payload.data = {
     "auto": 0, //The cooling temperature 0-99 degrees
     "dry": 0, //The cooling temperature 0-99 degrees
   },
-  "mode": "",
-  "fan": "",
+  "mode": "cooling/heating/fan/auto/dry",
+  "fan": "auto/high/medium/low",
   "state": true/false, //The AC power state
-  "setupMode": "",
-  "setupSpeed": "",
-  "currentMode": "",
-  "currentFan": "",
+  "setupMode": "cooling/heating/fan/auto/dry",
+  "setupSpeed": "auto/high/medium/low",
   "sweep": {
     "enabled": true/false, //Is the sweep enabled?
-    "state": ""
+    "state": 0/1 //The docs say 0=no sweep 1=sweep but there may be more values here
   }
 }
 ```
@@ -184,16 +182,16 @@ msg.payload.data = {
     "auto": 0, //The cooling temperature 0-99 degrees
     "dry": 0, //The cooling temperature 0-99 degrees
   },
-  "mode": "",
-  "fan": "",
+  "mode": "cooling/heating/fan/auto/dry",
+  "fan": "auto/high/medium/low",
   "state": true/false, //The AC power state
-  "setupMode": "",
-  "setupSpeed": "",
-  "currentMode": "",
-  "currentFan": "",
+  "setupMode": "cooling/heating/fan/auto/dry",
+  "setupSpeed": "auto/high/medium/low",
+  "currentMode": "cooling/heating/fan/auto/dry",
+  "currentFan": "auto/high/medium/low",
   "sweep": {
     "enabled": true/false, //Is the sweep enabled?
-    "state": ""
+    "state": 0/1 //The docs say 0=no sweep 1=sweep but there may be more values here
   }
 }
 ```
