@@ -17,3 +17,5 @@
     - Updated panel control for better processing of the data (disabled for the moment)
     - Added read temperature
     - Added ACControl
+- 1.8.1:
+    -Bug fix: Fixed ACControl not resolving modes correctly

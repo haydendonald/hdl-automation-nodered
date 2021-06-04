@@ -24,7 +24,7 @@ module.exports = {
                 },
                 "mode": values.modes[getBinVal(data[7], 0, 3)],
                 "fan": values.fanSpeeds[getBinVal(data[7], 4, 7)],
-                "state": data[8],
+                "state": data[8] == 1,
                 "setupMode": values.modes[data[9]] || data[9],
                 "setupSpeed": values.fanSpeeds[data[10]] || data[10],
                 "currentMode": values.modes[getBinVal(data[11], 0, 3)] || getBinVal(data[11], 0, 3),
@@ -182,7 +182,7 @@ module.exports = {
 
               var ret = {
                 "number":  data[0],
-                "temperatureType": values.tempType[data[1]],
+                "temperatureType": values.tempType[data[1]] || data[1],
                 "currentTemperature": data[2],
                 "setTemperature": {
                   "cooling": data[3],
@@ -192,11 +192,11 @@ module.exports = {
                 },
                 "mode": values.modes[getBinVal(data[7], 0, 3)],
                 "fan": values.fanSpeeds[getBinVal(data[7], 4, 7)],
-                "state": data[8],
-                "setupMode": data[9],
-                "setupSpeed": data[10],
-                "currentMode": values.modes[getBinVal(data[11], 0, 3)],
-                "currentFan": values.fanSpeeds[getBinVal(data[11], 4, 7)],
+                "state": data[8] == 1,
+                "setupMode": values.modes[data[9]] || data[9],
+                "setupSpeed": values.fanSpeeds[data[10]] || data[10],
+                "currentMode": values.modes[getBinVal(data[11], 0, 3)] || getBinVal(data[11], 0, 3),
+                "currentFan": values.fanSpeeds[getBinVal(data[11], 4, 7)] || getBinVal(data[11], 4, 7),
                 "sweep": {
                   "enabled": getBinVal(data[12], 0, 3) == 1,
                   "state": getBinVal(data[12], 4, 7)
@@ -221,7 +221,7 @@ module.exports = {
 
               var ret = {
                 "number":  data[0],
-                "temperatureType": values.tempType[data[1]],
+                "temperatureType": values.tempType[data[1]] || data[1],
                 "currentTemperature": data[2],
                 "setTemperature": {
                   "cooling": data[3],
@@ -231,11 +231,11 @@ module.exports = {
                 },
                 "mode": values.modes[getBinVal(data[7], 0, 3)],
                 "fan": values.fanSpeeds[getBinVal(data[7], 4, 7)],
-                "state": data[8],
-                "setupMode": data[9],
-                "setupSpeed": data[10],
-                "currentMode": values.modes[getBinVal(data[11], 0, 3)],
-                "currentFan": values.fanSpeeds[getBinVal(data[11], 4, 7)],
+                "state": data[8] == 1,
+                "setupMode": values.modes[data[9]] || data[9],
+                "setupSpeed": values.fanSpeeds[data[10]] || data[10],
+                "currentMode": values.modes[getBinVal(data[11], 0, 3)] || getBinVal(data[11], 0, 3),
+                "currentFan": values.fanSpeeds[getBinVal(data[11], 4, 7)] || getBinVal(data[11], 4, 7),
                 "sweep": {
                   "enabled": getBinVal(data[12], 0, 3) == 1,
                   "state": getBinVal(data[12], 4, 7)
