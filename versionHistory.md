@@ -18,4 +18,6 @@
     - Added read temperature
     - Added ACControl
 - 1.8.1:
-    -Bug fix: Fixed ACControl not resolving modes correctly
+    - Bug fix: Fixed ACControl not resolving modes correctly
+- 1.8.2:
+    - Bug fix: When setting the temperature to ACControl it would cause a crash due to a typo

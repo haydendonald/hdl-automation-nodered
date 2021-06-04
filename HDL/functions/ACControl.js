@@ -72,19 +72,19 @@ module.exports = {
                     if(data.setTemperature !== undefined) {
                       if(data.setTemperature.cooling !== undefined) {
                         if(typeof(data.setTemperature.cooling) != "number" || data.setTemperature.cooling < 0 || data.setTemperature.cooling > 86){reject("Invalid set temperature (cooling). Must be a number between 0 and 86"); return;}
-                        buffer[3] = parseInt(data.data.setTemperature.cooling);
+                        buffer[3] = parseInt(data.setTemperature.cooling);
                       }
                       if(data.setTemperature.heating !== undefined) {
                         if(typeof(data.setTemperature.heating) != "number" || data.setTemperature.heating < 0 || data.setTemperature.heating > 86){reject("Invalid set temperature (heating). Must be a number between 0 and 86"); return;}
-                        buffer[4] = parseInt(data.data.setTemperature.heating);
+                        buffer[4] = parseInt(data.setTemperature.heating);
                       }
                       if(data.setTemperature.auto !== undefined) {
                         if(typeof(data.setTemperature.auto) != "number" || data.setTemperature.auto < 0 || data.setTemperature.auto > 86){reject("Invalid set temperature (auto). Must be a number between 0 and 86"); return;}
-                        buffer[5] = parseInt(data.data.setTemperature.auto);
+                        buffer[5] = parseInt(data.setTemperature.auto);
                       }
                       if(data.setTemperature.dry !== undefined) {
                         if(typeof(data.setTemperature.dry) != "number" || data.setTemperature.dry < 0 || data.setTemperature.dry > 86){reject("Invalid set temperature (dry). Must be a number between 0 and 86"); return;}
-                        buffer[6] = parseInt(data.data.setTemperature.dry);
+                        buffer[6] = parseInt(data.setTemperature.dry);
                       }
                     }
 
