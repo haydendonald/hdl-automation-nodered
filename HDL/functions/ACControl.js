@@ -82,9 +82,6 @@ module.exports = {
                       }
                     }
 
-                    console.log(data.setTemperature);
-
-
                     if(data.setTemperature !== undefined) {
                       if(data.setTemperature.cooling !== undefined) {
                         if(typeof(data.setTemperature.cooling) != "number" || data.setTemperature.cooling < 0 || data.setTemperature.cooling > 86){reject("Invalid set temperature (cooling). Must be a number between 0 and 86"); return;}
@@ -103,8 +100,7 @@ module.exports = {
                         buffer[6] = parseInt(data.setTemperature.dry);
                       }
                     }
-
-                    
+   
                     if(data.mode !== undefined || data.fan !== undefined) {
                       var modeBin = "";
                       var fanBin = "";
