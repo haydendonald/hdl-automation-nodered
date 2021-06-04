@@ -23,3 +23,5 @@
     - Bug fix: When setting the temperature to ACControl it would cause a crash due to a typo
 - 1.8.3:
     - Feature: Changed setTemperature in ACControl to set the current set mode's temperature if the temp is passed
+- 1.8.4:
+    - Feature removal: Temporality removed readTemperatureOld due to a critical bug that one cannot debug at the time

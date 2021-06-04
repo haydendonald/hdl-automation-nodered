@@ -8,7 +8,7 @@ module.exports = {
         ACControl: require("./ACControl.js"),
         singleChannelControl: require("./singleChannelControl.js"),
         dryContact: require("./dryContact.js"),
-        readTemperatureOld: require("./readTemperatureOld.js"),
+        //readTemperatureOld: require("./readTemperatureOld.js"),
         readTemperature: require("./readTemperature.js")
     },
 
