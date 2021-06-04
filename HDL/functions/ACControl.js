@@ -69,6 +69,22 @@ module.exports = {
                       if(typeof(data.currentTemperature) != "number" || data.currentTemperature < 0 || data.currentTemperature > 99){reject("Invalid current temperature. Must be a number between 0 and 99"); return;}
                       buffer[2] = parseInt(data.currentTemperature);
                     }
+
+                    //If set temperature is an integer replace the set temp with the current setup mode
+                    if(typeof(data.setTemperature) == "number") {
+                      var val = data.setTemperature;
+                      data.setTemperature = {};
+                      if(data.setupMode === undefined) {
+                        data.setTemperature[values.modes[buffer[9]]] = parseInt(val);
+                      }
+                      else {
+                        data.setTemperature[data.setupMode] = parseInt(val);
+                      }
+                    }
+
+                    console.log(data.setTemperature);
+
+
                     if(data.setTemperature !== undefined) {
                       if(data.setTemperature.cooling !== undefined) {
                         if(typeof(data.setTemperature.cooling) != "number" || data.setTemperature.cooling < 0 || data.setTemperature.cooling > 86){reject("Invalid set temperature (cooling). Must be a number between 0 and 86"); return;}

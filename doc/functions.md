@@ -157,6 +157,7 @@ msg.payload.data = {
     "auto": 0, //The cooling temperature 0-99 degrees
     "dry": 0, //The cooling temperature 0-99 degrees
   },
+  "setTemperature": 21, //Or the temperature can be set like this and it will set the current mode temperature accordingly
   "mode": "cooling/heating/fan/auto/dry",
   "fan": "auto/high/medium/low",
   "state": true/false, //The AC power state

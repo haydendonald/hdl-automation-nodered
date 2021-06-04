@@ -21,3 +21,5 @@
     - Bug fix: Fixed ACControl not resolving modes correctly
 - 1.8.2:
     - Bug fix: When setting the temperature to ACControl it would cause a crash due to a typo
+- 1.8.3:
+    - Feature: Changed setTemperature in ACControl to set the current set mode's temperature if the temp is passed
