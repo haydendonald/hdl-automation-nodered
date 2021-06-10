@@ -197,6 +197,31 @@ msg.payload.data = {
 }
 ```
 
+# AC Control (Version 1)
+IN DEVELOPMENT
+
+AC control controls a air conditioner
+- **operate** = ```ACControlV1```
+
+### Example ```Get``` Request
+```
+//Example get request
+msg.payload.data = {}
+```
+
+### Example ```Set``` Request
+```
+//Example set request
+//If not specified it will set it to the current value read from the bus
+msg.payload.data = {}
+```
+
+### Example ```Response```
+```
+//Example response
+msg.payload.data = {}
+```
+
 # Date Time
 The current date and time in the HDL system
 - **operate** = "dateTime"

@@ -1,5 +1,6 @@
 module.exports = {
     list: {
+      //Version 2 AC Values
         ACValues: {
             "tempType": {0: "C", 1: "F"},
             "modes": {
@@ -17,6 +18,21 @@ module.exports = {
             },
         },
 
+        //Version 1 AC Values
+        ACValuesV1: {
+          //Mode values in data position 1, 2, 5, 8
+          "modes": {
+            "off": [32, 22], //Position 1, 5
+            "cooling": {
+              "auto": [1, 0, 150, 0],
+              "high": [1, 1, 150, 1],
+              "medium": [2, 2, 150, 2],
+              "low": [3, 3, 150, 3],
+            }
+          },
+        },
+
+        //Panel values
         PanelValues: {
             //IR Control
             1: {

@@ -398,6 +398,8 @@ module.exports = function(RED)
                 //If we have been in this loop for too long break to allow the other buffers to function
                 if(i > 100){break;}
 
+                console.log(message);
+
                 var messageIsValid = true;
                 var message = receiveBuffer[i];
 
@@ -409,29 +411,29 @@ module.exports = function(RED)
                 }
 
                 //IP Address
-                if(parseInt(message[0]) != parseInt(ipAddress.split(".")[0])){ messageIsValid = false; }
-                if(parseInt(message[1]) != parseInt(ipAddress.split(".")[1])){ messageIsValid = false; }
-                if(parseInt(message[2]) != parseInt(ipAddress.split(".")[2])){ messageIsValid = false; }
-                if(parseInt(message[3]) != parseInt(ipAddress.split(".")[3])){ messageIsValid = false; }
+                if(messageIsValid && parseInt(message[0]) != parseInt(ipAddress.split(".")[0])){ messageIsValid = false; }
+                if(messageIsValid && parseInt(message[1]) != parseInt(ipAddress.split(".")[1])){ messageIsValid = false; }
+                if(messageIsValid && parseInt(message[2]) != parseInt(ipAddress.split(".")[2])){ messageIsValid = false; }
+                if(messageIsValid && parseInt(message[3]) != parseInt(ipAddress.split(".")[3])){ messageIsValid = false; }
 
                 //HDLMIRACLE (In dec)
-                if(message[4] != 72){ messageIsValid =  false; }
-                if(message[5] != 68){ messageIsValid =  false; }
-                if(message[6] != 76){ messageIsValid =  false; }
-                if(message[7] != 77){ messageIsValid =  false; }
-                if(message[8] != 73){ messageIsValid =  false; }
-                if(message[9] != 82){ messageIsValid =  false; }
-                if(message[10] != 65){ messageIsValid =  false; }
-                if(message[11] != 67){ messageIsValid =  false; }
-                if(message[12] != 76){ messageIsValid =  false; }
-                if(message[13] != 69){ messageIsValid =  false; }
+                if(messageIsValid && message[4] != 72){ messageIsValid =  false; }
+                if(messageIsValid && message[5] != 68){ messageIsValid =  false; }
+                if(messageIsValid && message[6] != 76){ messageIsValid =  false; }
+                if(messageIsValid && message[7] != 77){ messageIsValid =  false; }
+                if(messageIsValid && message[8] != 73){ messageIsValid =  false; }
+                if(messageIsValid && message[9] != 82){ messageIsValid =  false; }
+                if(messageIsValid && message[10] != 65){ messageIsValid =  false; }
+                if(messageIsValid && message[11] != 67){ messageIsValid =  false; }
+                if(messageIsValid && message[12] != 76){ messageIsValid =  false; }
+                if(messageIsValid && message[13] != 69){ messageIsValid =  false; }
 
                 //Lead Code
-                if(message[14] != 0xAA){ messageIsValid =  false; }
-                if(message[15] != 0xAA){ messageIsValid =  false; }
+                if(messageIsValid && message[14] != 0xAA){ messageIsValid =  false; }
+                if(messageIsValid && message[15] != 0xAA){ messageIsValid =  false; }
 
                 //Size of packet
-                if(message[16] < 11 || message[16] > 78){ messageIsValid = false; }
+                if(messageIsValid && (message[16] < 11 || message[16] > 78)){ messageIsValid = false; }
 
                 var wasSentToThisDevice = true;
                 //Target Subnet ID (Equal to local, or global 255 value)
@@ -440,8 +442,16 @@ module.exports = function(RED)
                 if(!(message[24] == localDeviceId || message[24] == 255)){wasSentToThisDevice = false;}
 
                 //CRC Code
-                var crcValue = message.readUInt16BE(message.length -2);
-                if(!crc(message.slice(16, -2))){ messageIsValid =  false; }
+                if(messageIsValid) {
+
+                    //DISABLED FOR DEBUG!!!
+                    // var crcValue = message.readUInt16BE(message.length -2);
+                    // if(crcValue != crc(message.slice(16, -2))){
+                    //     messageIsValid =  false;
+                    //     console.log("The following packet passed all checks but failed the CRC calculation, check if the device is calculating it correctly or there may be a network issue. CRC: " + crcValue + ", Expected: " + crc(message.slice(16, -2)));
+                    //     console.log(message);
+                    // }
+                }
 
                 if(messageIsValid == true) {
 
