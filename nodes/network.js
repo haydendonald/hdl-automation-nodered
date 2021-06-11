@@ -398,8 +398,6 @@ module.exports = function(RED)
                 //If we have been in this loop for too long break to allow the other buffers to function
                 if(i > 100){break;}
 
-                console.log(message);
-
                 var messageIsValid = true;
                 var message = receiveBuffer[i];
 
@@ -443,14 +441,12 @@ module.exports = function(RED)
 
                 //CRC Code
                 if(messageIsValid) {
-
-                    //DISABLED FOR DEBUG!!!
-                    // var crcValue = message.readUInt16BE(message.length -2);
-                    // if(crcValue != crc(message.slice(16, -2))){
-                    //     messageIsValid =  false;
-                    //     console.log("The following packet passed all checks but failed the CRC calculation, check if the device is calculating it correctly or there may be a network issue. CRC: " + crcValue + ", Expected: " + crc(message.slice(16, -2)));
-                    //     console.log(message);
-                    // }
+                    var crcValue = message.readUInt16BE(message.length -2);
+                    if(crcValue != crc(message.slice(16, -2))){
+                        messageIsValid =  false;
+                        console.log("The following packet passed all checks but failed the CRC calculation, check if the device is calculating it correctly or there may be a network issue. CRC: " + crcValue + ", Expected: " + crc(message.slice(16, -2)));
+                        console.log(message);
+                    }
                 }
 
                 if(messageIsValid == true) {
