@@ -313,16 +313,16 @@ module.exports = {
         set: function (data) {
           if (data.key === undefined) { return undefined; }
           if (data.state === undefined) { return undefined; }
-          return [this.values[data.state], parseInt(data.key)];
+          return [parseInt(data.key), this.values[data.state]];
         },
 
         process: function (data) {
           for (var i in this.values) {
-            if (this.values[i] == data[1]) {
-              return { "key": data[2], "state": i }
+            if (this.values[i] == data[2]) {
+              return { "key": data[1], "state": i }
             }
           }
-          return { "key": data[2], "state": data[1] }
+          return { "key": data[1], "state": data[2] }
         }
       },
       "shieldPage": {
@@ -338,16 +338,16 @@ module.exports = {
         set: function (data) {
           if (data.page === undefined) { return undefined; }
           if (data.state === undefined) { return undefined; }
-          return [this.values[data.state], parseInt(data.page)];
+          return [parseInt(data.page), this.values[data.state]];
         },
 
         process: function (data) {
           for (var i in this.values) {
-            if (this.values[i] == data[1]) {
-              return { "page": data[2], "state": i }
+            if (this.values[i] == data[2]) {
+              return { "page": data[1], "state": i }
             }
           }
-          return { "page": data[2], "state": data[1] }
+          return { "page": data[1], "state": data[2] }
         }
       },
       "controlButtonLED": {
@@ -363,16 +363,16 @@ module.exports = {
         set: function (data) {
           if (data.key === undefined) { return undefined; }
           if (data.state === undefined) { return undefined; }
-          return [this.values[data.state], parseInt(data.key)];
+          return [parseInt(data.key), this.values[data.state]];
         },
 
         process: function (data) {
           for (var i in this.values) {
-            if (this.values[i] == data[1]) {
-              return { "key": data[2], "state": i }
+            if (this.values[i] == data[2]) {
+              return { "key": data[1], "state": i }
             }
           }
-          return { "key": data[2], "state": data[1] }
+          return { "key": data[1], "state": data[2] }
         }
       },
       "controlButton": {
@@ -388,16 +388,16 @@ module.exports = {
         set: function (data) {
           if (data.key === undefined) { return undefined; }
           if (data.state === undefined) { return undefined; }
-          return [this.values[data.state], parseInt(data.key)];
+          return [parseInt(data.key), this.values[data.state]];
         },
 
         process: function (data) {
           for (var i in this.values) {
-            if (this.values[i] == data[1]) {
-              return { "key": data[2], "state": i }
+            if (this.values[i] == data[2]) {
+              return { "key": data[1], "state": i }
             }
           }
-          return { "key": data[2], "state": data[1] }
+          return { "key": data[1], "state": data[2] }
         }
       },
       "ACDryTemp": {
