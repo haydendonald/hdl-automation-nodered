@@ -29,3 +29,5 @@
     - Feature: Updated panelControl to newer version
     - Bug fix: Fixed a possible crash from occurring if a message is sent on port 6000 that is not in the correct format.
     - Bug fix: Fixed an issue with the CRC not being checked when a message is received.
+- 1.9.1:
+    - Bug fix: Some functions in panel control had data in the wrong order this has been resolved
