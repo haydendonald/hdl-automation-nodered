@@ -31,3 +31,5 @@
     - Bug fix: Fixed an issue with the CRC not being checked when a message is received.
 - 1.9.1:
     - Bug fix: Some functions in panel control had data in the wrong order this has been resolved
+- 1.9.2:
+    - Bug fix: Sped up the handlers from 100ms to 1ms

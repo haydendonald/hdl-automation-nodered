@@ -108,8 +108,8 @@ module.exports = function(RED)
             });
         }, 10000);
 
-        var sendInterval = setInterval(function() {processSendBuffer();}, 100);
-        var receiveInterval = setInterval(function() {processReceiveBuffer();}, 100);
+        var sendInterval = setInterval(function() {processSendBuffer();}, 1);
+        var receiveInterval = setInterval(function() {processReceiveBuffer();}, 1);
 
         //Pings the server, returns true if connected
         function checkConnection(func) {
@@ -531,7 +531,7 @@ module.exports = function(RED)
             server = udp.createSocket('udp4');
 
             server.on('error', function(err) {
-                node.error("An Error Occured: " + err);
+                node.error("An Error Occurred: " + err);
                 node.sendStatus("red", "Internal Error", err);
             });
 
