@@ -108,8 +108,8 @@ module.exports = function(RED)
             });
         }, 10000);
 
-        var sendInterval = setInterval(function() {processSendBuffer();}, 1);
-        var receiveInterval = setInterval(function() {processReceiveBuffer();}, 1);
+        var sendInterval = setInterval(function() {processSendBuffer();}, 10);
+        var receiveInterval = setInterval(function() {processReceiveBuffer();}, 10);
 
         //Pings the server, returns true if connected
         function checkConnection(func) {
