@@ -64,72 +64,94 @@ Sequence control selects a sequence within a area
   - **sequenceInArea** The sequence number active within a area
 
 # Panel Control
-  Panel control controls a wall panel
-  - **operate** = "panelControl"
-  - **mode** = "set/get" (Set sets the value, get gets the value)
-  - **direction** = "request/answerBack" (Request asks for the current value, answerBack is the reply for the request)
-  - **data**
-    - **function** The panel function to be processed
-      - "ircontrol"
-        - **value** = "on/off"
-      - "lockpanel"
-        - **value** = "on/off"
-      - "acpower"
-        - **value** = "on/off"
-      - "coolingtemp"
-        - **value** = 0-84
-      - "fanspeed"
-        - **value** = "auto/high/medium/low"
-      - "acmode"
-        - **value** = "cooling/heating/fan/auto/dehumidify"
-      - "heattemp"
-        - **value** = 0-84
-      - "autotemp"
-        - **value** = 0-84
-      - "risetemp"
-        - **value** = 0-5
-      - "decreasetemp"
-        - **value** = 0-5
-      - "backlightstatus"
-        - **value** = "on/off"
-      - "lockac"
-        - **value** = "on/off"
-      - "backlightlevel"
-        - **value** = 0-100
-      - "statuslightlevel"
-        - **value** = 0-100
-      - "shieldbutton"
-        - **selector** (button) = 1-255
-        - **value** = "on/off"
-      - "shieldpage"
-        - **selector** (page) = 1-255
-        - **value** = "on/off"
-      - "controlbuttonled"
-        - **selector** (button) = 1-255
-        - **value** = "on/off"
-      - "controlbutton"
-        - **selector** (button) = 1-255
-        - **value** = "on/off"
-      - "drytemp"
-        - **value** = 0-84
-      - "tempstatus"
-        - **value** = "on/off"
-      - "tempmode"
-        - **value** = "normal/day/night/away/timer"
-      - "fhrisetemp"
-        - **value** = 0-5
-      - "fhdecreasetemp"
-        - **value** = 0-5
-      - "locksetuppage"
-        - **value** = "on/off"
-      - "normaltemp"
-        - **value** = 0-84
-      - "daytemp"
-        - **value** = 0-84
-      - "nighttemp"
-        - **value** = 0-84
-      - "awaytemp"
-        - **value** = 0-84
+
+Controls a wall panel
+- **operate** = ```panelControl```
+
+### Example ```Get``` Request
+```
+//Example get request
+msg.payload.data = {
+  "function": "<function name>"
+}
+```
+
+### Example ```Set``` Request
+```
+//Example set request
+msg.payload.data = {
+  "function": "<function name>",
+  "value": "<function value">
+}
+```
+
+### Example ```Response```
+```
+//Example response
+msg.payload.data = {
+  "function": "<function name>",
+  "value": "<function value">
+}
+```
+## Functions
+The following are the functions supported
+### function = ```"irControl"```
+value = "on/off/true/false"
+### function = ```"lockPanel"```
+value = "on/off/true/false"
+### function = ```"ACPower"```
+value = {number: 1, state: "on/off/true/false"}
+### function = ```"ACCoolTemp"```
+value = {number: 1, temp: 0-84}
+### function = ```"ACFanSpeed"```
+value = {number: 1, state: "auto/high/medium/low"}
+### function = ```"ACMode"```
+value = {number: 1, state: "cooling/heating/fan/auto/dehumidify"}
+### function = ```"ACHeatTemp"```
+value = {number: 1, temp: 0-84}
+### function = ```"ACAutoTemp"```
+value = {number: 1, temp: 0-84}
+### function = ```"ACRiseTemp"```
+value = {number: 1, temp: 0-5}
+### function = ```"ACDecreaseTemp"```
+value = {number: 1, temp: 0-5}
+### function = ```"backlightStatus"```
+value = "on/off/true/false"
+### function = ```"ACLock"```
+value = {number: 1, state: "on/off/true/false"}
+### function = ```"backlightLevel"```
+value = 0-100
+### function = ```"statusLightLevel"```
+value = 0-100
+### function = ```"shieldButton"```
+value = {key: 1, state: "on/off/true/false"}
+### function = ```"shieldPage"```
+value = {page: 1, state: "on/off/true/false"}
+### function = ```"controlButtonLED"```
+value = {key: 1, state: "on/off/true/false"}
+### function = ```"controlButton"```
+value = {key: 1, state: "on/off/true/false"}
+### function = ```"ACDryTemp"```
+value = {number: 1, temp: 0-84}
+### function = ```"ACTempStatus"```
+value = {number: 1, state: "on/off/true/false"}
+### function = ```"ACTempMode"```
+value = {number: 1, state: "normal/day/night/away/timer"}
+### function = ```"FHRiseTemp"```
+value = {number: 1, temp: 0-5}
+### function = ```"FHDecreaseTemp"```
+value = {number: 1, temp: 0-5}
+### function = ```"lockSetupPage"```
+value = "on/off/true/false"
+### function = ```"normalTemp"```
+value = {number: 1, temp: 0-84}
+### function = ```"dayTemp"```
+value = {number: 1, temp: 0-84}
+### function = ```"nightTemp"```
+value = {number: 1, temp: 0-84}
+### function = ```"awayTemp"```
+value = {number: 1, temp: 0-84}
+
 
 # AC Control
 AC control controls a air conditioner
@@ -195,31 +217,6 @@ msg.payload.data = {
     "state": 0/1 //The docs say 0=no sweep 1=sweep but there may be more values here
   }
 }
-```
-
-# AC Control (Version 1)
-IN DEVELOPMENT
-
-AC control controls a air conditioner
-- **operate** = ```ACControlV1```
-
-### Example ```Get``` Request
-```
-//Example get request
-msg.payload.data = {}
-```
-
-### Example ```Set``` Request
-```
-//Example set request
-//If not specified it will set it to the current value read from the bus
-msg.payload.data = {}
-```
-
-### Example ```Response```
-```
-//Example response
-msg.payload.data = {}
 ```
 
 # Date Time

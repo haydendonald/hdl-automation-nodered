@@ -4,13 +4,12 @@ module.exports = {
         UVSwitch: require("./UVSwitch.js"),
         dateTime: require("./dateTime.js"),
         sequenceControl: require("./sequenceControl.js"),
-        //panelControl: require("./panelControl.js"),
+        panelControl: require("./panelControl.js"),
         ACControl: require("./ACControl.js"),
         singleChannelControl: require("./singleChannelControl.js"),
         dryContact: require("./dryContact.js"),
         //readTemperatureOld: require("./readTemperatureOld.js"),
         readTemperature: require("./readTemperature.js"),
-        //ACControlVersion1: require("./ACControlV1.js")
     },
 
     //Find the opCode of a function
