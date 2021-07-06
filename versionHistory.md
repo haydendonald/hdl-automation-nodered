@@ -33,3 +33,5 @@
     - Bug fix: Some functions in panel control had data in the wrong order this has been resolved
 - 1.9.2:
     - Bug fix: Sped up the handlers from 100ms to 1ms
+- 1.9.5:
+    - Bug fix: Fixed an issue with the timeout occurring early when the handlers were sped up

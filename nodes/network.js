@@ -25,6 +25,7 @@ module.exports = function(RED)
         var localIpAddress = "0.0.0.0";
         var ipAddress = config.ipAddress;
         var port = config.port;
+        var bufferRate = 10; //ms
         debug = config.debug;
         var blockDuplicate = config.blockDuplicate == "on";
         var connected = false;
@@ -108,8 +109,8 @@ module.exports = function(RED)
             });
         }, 10000);
 
-        var sendInterval = setInterval(function() {processSendBuffer();}, 10);
-        var receiveInterval = setInterval(function() {processReceiveBuffer();}, 10);
+        var sendInterval = setInterval(function() {processSendBuffer();}, bufferRate);
+        var receiveInterval = setInterval(function() {processReceiveBuffer();}, bufferRate);
 
         //Pings the server, returns true if connected
         function checkConnection(func) {
@@ -363,7 +364,7 @@ module.exports = function(RED)
                     }
                     else {
                         sendBuffer[i].attempts += 1;
-                        sendBuffer[i].timeout = 20;
+                        sendBuffer[i].timeout = 2000; //ms
 
                         //Send the packet
                         if(server && connected) {
@@ -389,7 +390,7 @@ module.exports = function(RED)
                         }
                     }
                 }
-                else {sendBuffer[i].timeout -= 1;}
+                else {sendBuffer[i].timeout -= bufferRate;}
             }
         }
 
