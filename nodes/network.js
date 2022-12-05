@@ -474,6 +474,10 @@ module.exports = function(RED)
                                 "deviceId": deviceId,
                                 "wasSentToThisDevice": wasSentToThisDevice
                             },
+                            "target": {
+                                "subnetId" : message[23],
+                                "deviceId": message[24],
+                            },
                             "operate": null,
                             "mode": null,
                             "direction": null,

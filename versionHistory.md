@@ -35,3 +35,5 @@
     - Bug fix: Sped up the handlers from 100ms to 1ms
 - 1.9.5:
     - Bug fix: Fixed an issue with the timeout occurring early when the handlers were sped up
+- 1.9.6:
+    - Feature: Added the target device to the received message
