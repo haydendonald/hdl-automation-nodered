@@ -2,7 +2,7 @@
 Provides control and feedback of the HDL Automation bus.  
 [HDL Automation](https://www.hdlautomation.com/)
 
-## This project is no longer being maintained.
+# This project is no longer being maintained.
 Don't stress! The HDL bus is unlikely to be changed in the near future so it is likely that this project will still work! I will keep the project open if you wish to contribute to the project.
 
 # How to Use
