@@ -52,26 +52,26 @@ When events occur on the bus commands will be outputted in the following format:
 ```
 
 ## Supported Functions
-### [Scene Control]("https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/sceneControl.md")
+### [Scene Control](https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/sceneControl.md)
 Gets/Sets a scene on an area for a device
 
-### [Sequence Control]("https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/sequenceControl.md")
+### [Sequence Control](https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/sequenceControl.md)
 Gets/Sets a sequence on an area for a device
 
-### [UV Switch]("https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/UVSwitch.md")
+### [UV Switch](https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/UVSwitch.md)
 Gets/Sets a a universal switch value on a device
 
-### [Single Channel Control]("https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/singleChannelControl.md")
+### [Single Channel Control](https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/singleChannelControl.md)
 Gets/Sets a single channel on a device
 
-### [Date Time]("https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/dateTime.md")
+### [Date Time](https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/dateTime.md)
 Gets the date/time
 
-### [AC Control]("https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/ACControl.md")
+### [AC Control](https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/ACControl.md)
 Controls a HVAC device (See panel control as some devices use the panel)
 
-### [Panel Control]("https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/panelControl.md")
+### [Panel Control](https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/panelControl.md)
 Controls a individual control panel, including AC control if controlled via a panel
 
-### [Dry Control]("https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/dryContact.md")
+### [Dry Control](https://github.com/haydendonald/hdl-automation-nodered/tree/master/doc/dryContact.md)
 Gets the value of a dry contact, useful for PIRs
